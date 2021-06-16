@@ -86,8 +86,8 @@ class MainApp(App):
         window_height_button_about_game = Window.height / 7
     # Размеры между надписями в "Об Игре" (чем меньше число там дальше от центра)
     if was_portrait_orientation():
-        window_height_text_1 = Window.height / 4
-        window_height_text_2 = Window.height / 5
+        window_height_text_1 = Window.height / 2.5
+        window_height_text_2 = Window.height / 7
         window_height_text_3 = Window.height / 10
     else:
         window_height_text_1 = Window.height / 2
@@ -99,9 +99,9 @@ class MainApp(App):
         window_width_text_font_2 = Window.width / 30
         window_width_text_font_3 = Window.width / 30
     else:
-        window_width_text_font_1 = Window.width / 40
-        window_width_text_font_2 = Window.width / 50
-        window_width_text_font_3 = Window.width / 50
+        window_width_text_font_1 = Window.width / 45
+        window_width_text_font_2 = Window.width / 55
+        window_width_text_font_3 = Window.width / 55
 
 
     сomplexity = 1
@@ -110,7 +110,7 @@ class MainApp(App):
     time = 0
 
     def on_start(self):
-        Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/90.)
+        Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
 
     # Заставляем Уруру двигаться вверх-вниз
     def move_ururu(self, time_passed):
@@ -164,7 +164,7 @@ class MainApp(App):
         self.root.ids.score.text = "0"
         self.cobwebs = []
         # Таймер
-        self.frames = Clock.schedule_interval(self.next_frame, 1/60.)
+        self.frames = Clock.schedule_interval(self.next_frame, 1/90.)
 
         # Скрываем кнопку "об игре"
         self.root.ids.about_game_button.disabled = True
