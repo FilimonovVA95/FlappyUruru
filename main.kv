@@ -10,10 +10,10 @@ FloatLayout:
                 source: "background.png"
             Rectangle:
                 size: self.width, app.window_height / 5
-                pos: self.pos[0], self.pos[1] + self.height - 131
+                pos: self.pos[0], self.pos[1] + self.height - app.window_height / 5
                 texture: self.cloud_texture
             Rectangle:
-                size: self.width, app.window_height / 2
+                size: self.width, app.window_height_city
                 pos: self.pos[0], self.pos[1]
                 texture: self.city_texture
     Label:
@@ -24,8 +24,8 @@ FloatLayout:
         font_size: app.window_height / 14
     Button:
         size_hint: None, None
-        size: app.window_height / 5 * 2, app.window_height / 5
-        pos: (root.width / 2) - app.window_height / 10 * 2, (root.height / 2.0) - app.window_height / 10
+        size: app.window_height_button_start_game * 2, app.window_height_button_start_game
+        pos: (root.width / 2.0) - app.window_height_button_start_game, (root.height / 2.0) - app.window_height_button_start_game / 2
         text: "Начать игру"
         background_normal: "blood_frame.png"
         background_down: "blood_frame.png"
@@ -37,8 +37,8 @@ FloatLayout:
             app.start_game()
     Button:
         size_hint: None, None
-        size: app.window_height / 7 * 2, app.window_height / 7
-        pos: app.window_height / 15, app.window_height / 15
+        size: app.window_height_button_about_game * 2, app.window_height_button_about_game
+        pos: app.window_height_button_about_game / 2, app.window_height_button_about_game / 2
         text: "Об Игре"
         background_normal: "button_frame.png"
         background_down: "button_frame.png"
@@ -87,7 +87,7 @@ FloatLayout:
     Label:
         id: about_game_text1
         size_hint_y: None
-        height: root.height + 250
+        height: root.height + app.window_height / 2
         text: "Игра Flappy Ururu"
         font_size: app.window_height / 25
         color: (255, 255, 255)
@@ -95,7 +95,7 @@ FloatLayout:
     Label:
         id: about_game_text2
         size_hint_y: None
-        height: root.height + 120
+        height: root.height + app.window_height / 5
         text: "    Разработчик: Дракоша \n    Иллюстрации: Mr.Zapadlo \n    Задний фон: интернет"
         font_size: app.window_height / 35
         color: (255, 255, 255)
@@ -103,7 +103,7 @@ FloatLayout:
     Label:
         id: about_game_text3
         size_hint_y: None
-        height: root.height - 70
+        height: root.height - app.window_height / 10
         text: "    Вдохновитель: Ururu-chan \n    Поддержите Втубера"
         font_size: app.window_height / 35
         color: (255, 255, 255)

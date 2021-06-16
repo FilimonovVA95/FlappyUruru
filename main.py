@@ -8,6 +8,14 @@ from kivy.clock import Clock
 from spiderWeb import SpiderWeb
 
 
+# Выясняем ориентацию
+def was_portrait_orientation():
+    if Window.width < Window.height:
+        return True
+    else:
+        return False
+
+
 # Задний фон
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -27,11 +35,10 @@ class Background(Widget):
         self.city_texture.wrap = 'repeat'
         self.city_texture.uvsize = (Window.width / self.city_texture.width, -1)
 
-
     # Обновление облаков и города - эмитация их движения
     def scroll_textures(self, time_passed):
-        self.cloud_texture.uvpos = ( (self.cloud_texture.uvpos[0] - time_passed/2.0)%Window.width , self.cloud_texture.uvpos[1])
-        self.city_texture.uvpos = ( (self.city_texture.uvpos[0] + time_passed/1.5)%Window.width, self.city_texture.uvpos[1])
+        self.cloud_texture.uvpos = ((self.cloud_texture.uvpos[0] - time_passed * MainApp.сomplexity) % Window.width, self.cloud_texture.uvpos[1])
+        self.city_texture.uvpos = ((self.city_texture.uvpos[0] + time_passed * MainApp.сomplexity) % Window.width, self.city_texture.uvpos[1])
 
         texture = self.property('cloud_texture')
         texture.dispatch(self)
@@ -45,7 +52,7 @@ class Ururu(Image):
 
     def on_touch_down(self, touch):
         self.source = "ururu2.png"
-        self.velocity = Window.height / 4
+        self.velocity = (Window.height / 3) * MainApp.сomplexity
         super().on_touch_down(touch)
 
     def on_touch_up(self, touch):
@@ -54,10 +61,28 @@ class Ururu(Image):
 
 
 class MainApp(App):
+    # Размеры экрана
     window_width = Window.width
     window_height = Window.height
+    # Размеры города
+    if was_portrait_orientation():
+        window_height_city = Window.height / 4
+    else:
+        window_height_city = Window.height / 2
+    # Размеры кнопки начать игру
+    if was_portrait_orientation():
+        window_height_button_start_game = Window.height / 10
+    else:
+        window_height_button_start_game = Window.height / 5
+    # Размеры кнопки "О Игре"
+    if was_portrait_orientation():
+        window_height_button_about_game = Window.height / 20
+    else:
+        window_height_button_about_game = Window.height / 7
+
+    сomplexity = 1
     cobwebs = []
-    GRAVITY = Window.height / 2
+    GRAVITY = (Window.height / 1.5) * сomplexity
     time = 0
 
     def on_start(self):
@@ -123,7 +148,7 @@ class MainApp(App):
 
         # Создать паутину
         num_web = 200
-        distance_between_web = Window.height / 5
+        distance_between_web = (Window.height / 3) / MainApp.сomplexity
         for i in range(num_web):
             web = SpiderWeb()
             web.web_position = randint(50, self.root.height - 100)
@@ -136,7 +161,7 @@ class MainApp(App):
 
     def move_cobwebs(self, time_passed):
         for web in self.cobwebs:
-            web.x -= time_passed * 200
+            web.x -= time_passed * 400 * self.сomplexity
 
         # Зацикливание паутинки
         distance_between_web = Window.height / 5
