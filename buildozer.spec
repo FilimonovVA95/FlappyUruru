@@ -28,7 +28,7 @@ source.dir = .
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.3.2
+version = 0.3.3
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -43,10 +43,10 @@ requirements = python3,kivy==2.0.0
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/testlogo1.jpg
+#presplash.filename = %(source.dir)s/ururulogo.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/testlogo2.jpg
+#icon.filename = %(source.dir)s/ururulogo.png
 
 # (str) Supported orientation (one of landscape, sensorLandscape, portrait or all)
 orientation = sensorLandscape

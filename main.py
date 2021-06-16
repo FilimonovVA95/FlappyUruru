@@ -8,14 +8,6 @@ from kivy.clock import Clock
 from spiderWeb import SpiderWeb
 
 
-# Выясняем ориентацию
-def was_portrait_orientation():
-    if Window.width < Window.height:
-        return True
-    else:
-        return False
-
-
 # Задний фон
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -28,12 +20,7 @@ class Background(Widget):
         # Создаем текстуру облаков
         self.cloud_texture = Image(source="cloud.png").texture
         self.cloud_texture.wrap = 'repeat'
-        # Для адекватного отображения облаков
-        if was_portrait_orientation():
-            cloud_width = Window.width / self.cloud_texture.width - 1
-        else:
-            cloud_width = Window.width / self.cloud_texture.width
-        self.cloud_texture.uvsize = (cloud_width, -1)
+        self.cloud_texture.uvsize = (Window.width / self.cloud_texture.width, -1)
 
         # Создаем текстуру города
         self.city_texture = Image(source="city.png").texture
@@ -69,41 +56,6 @@ class MainApp(App):
     # Размеры экрана
     window_width = Window.width
     window_height = Window.height
-    # Размеры города
-    if was_portrait_orientation():
-        window_height_city = Window.height / 4
-    else:
-        window_height_city = Window.height / 2
-    # Размеры кнопки начать игру
-    if was_portrait_orientation():
-        window_height_button_start_game = Window.height / 10
-    else:
-        window_height_button_start_game = Window.height / 5
-    # Размеры кнопки "О Игре"
-    if was_portrait_orientation():
-        window_height_button_about_game = Window.height / 12
-    else:
-        window_height_button_about_game = Window.height / 7
-    # Размеры между надписями в "Об Игре" (чем меньше число там дальше от центра)
-    if was_portrait_orientation():
-        window_height_text_1 = Window.height / 2.5
-        window_height_text_2 = Window.height / 7
-        window_height_text_3 = Window.height / 10
-    else:
-        window_height_text_1 = Window.height / 2
-        window_height_text_2 = Window.height / 6
-        window_height_text_3 = Window.height / 10
-    # Размеры текста в надписях в "Об Игре"
-    if was_portrait_orientation():
-        window_width_text_font_1 = Window.width / 20
-        window_width_text_font_2 = Window.width / 30
-        window_width_text_font_3 = Window.width / 30
-    else:
-        window_width_text_font_1 = Window.width / 45
-        window_width_text_font_2 = Window.width / 55
-        window_width_text_font_3 = Window.width / 55
-
-
     сomplexity = 1
     cobwebs = []
     GRAVITY = (Window.height / 1.5) * сomplexity
@@ -185,7 +137,7 @@ class MainApp(App):
 
     def move_cobwebs(self, time_passed):
         for web in self.cobwebs:
-            web.x -= time_passed * 400 * self.сomplexity
+            web.x -= time_passed * 600 * self.сomplexity
 
         # Зацикливание паутинки
         distance_between_web = Window.height / 5
