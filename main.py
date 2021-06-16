@@ -1,5 +1,4 @@
 from random import randint
-
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty, NumericProperty
@@ -28,17 +27,12 @@ class Background(Widget):
         self.city_texture.wrap = 'repeat'
         self.city_texture.uvsize = (Window.width / self.city_texture.width, -1)
 
-   # def on_size(self, *args):
-    #    self.cloud_texture.uvsize = (self.width / self.cloud_texture.width, -1)
-   #     self.city_texture.uvsize = (self.width / self.city_texture.width, -1)
 
     # Обновление облаков и города - эмитация их движения
     def scroll_textures(self, time_passed):
-        # Update the uvpos of the texture
         self.cloud_texture.uvpos = ( (self.cloud_texture.uvpos[0] - time_passed/2.0)%Window.width , self.cloud_texture.uvpos[1])
         self.city_texture.uvpos = ( (self.city_texture.uvpos[0] + time_passed/1.5)%Window.width, self.city_texture.uvpos[1])
 
-        # Redraw the texture
         texture = self.property('cloud_texture')
         texture.dispatch(self)
 
@@ -51,7 +45,7 @@ class Ururu(Image):
 
     def on_touch_down(self, touch):
         self.source = "ururu2.png"
-        self.velocity = 150
+        self.velocity = Window.height / 4
         super().on_touch_down(touch)
 
     def on_touch_up(self, touch):
@@ -60,8 +54,10 @@ class Ururu(Image):
 
 
 class MainApp(App):
+    window_width = Window.width
+    window_height = Window.height
     cobwebs = []
-    GRAVITY = 300
+    GRAVITY = Window.height / 2
     time = 0
 
     def on_start(self):
@@ -78,10 +74,10 @@ class MainApp(App):
     def check_collision_game_over(self):
         ururu = self.root.ids.ururu
         for web in self.cobwebs:
-            # Проверяем что позиция сетки по горизонту 20 +/- "толщина" сетки
-            if (web.pos[0] < 60) and (web.pos[0] > -20):
+            # Проверяем что позиция сетки по горизонту 20 +/- "толщина" сетки "тольщина" Ури
+            if (web.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (web.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
-                if abs(web.pos[1] - ururu.pos[1]) < 70:
+                if abs(web.pos[1] - ururu.pos[1]) < Window.height / 7:
                     self.game_over()
                     self.root.remove_widget(web)
                     self.cobwebs.remove(web)
@@ -126,14 +122,14 @@ class MainApp(App):
         self.root.ids.about_game_button.opacity = 0
 
         # Создать паутину
-        num_web = 50
-        distance_between_web = 150
+        num_web = 200
+        distance_between_web = Window.height / 5
         for i in range(num_web):
             web = SpiderWeb()
             web.web_position = randint(50, self.root.height - 100)
             web.size_hint = (None, None)
             web.pos = (Window.width + i*distance_between_web, web.web_position)
-            web.size = (218, 193)
+            web.size = (Window.height / 5, Window.height / 5)
 
             self.cobwebs.append(web)
             self.root.add_widget(web)
@@ -143,7 +139,7 @@ class MainApp(App):
             web.x -= time_passed * 200
 
         # Зацикливание паутинки
-        distance_between_web = 150
+        distance_between_web = Window.height / 5
         web_xs = list(map(lambda web: web.x, self.cobwebs))
         right_most_x = max(web_xs)
         if right_most_x <= Window.width - distance_between_web:

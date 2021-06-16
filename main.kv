@@ -9,23 +9,23 @@ FloatLayout:
                 pos: self.pos
                 source: "background.png"
             Rectangle:
-                size: self.width, 131
+                size: self.width, app.window_height / 5
                 pos: self.pos[0], self.pos[1] + self.height - 131
                 texture: self.cloud_texture
             Rectangle:
-                size: self.width, 215
+                size: self.width, app.window_height / 2
                 pos: self.pos[0], self.pos[1]
                 texture: self.city_texture
     Label:
         id: score
         size_hint_y: None
-        height: 100
+        height: app.window_height / 5
         text: "0"
-        font_size: 40
+        font_size: app.window_height / 14
     Button:
         size_hint: None, None
-        size: 150, 100
-        pos: (root.width / 2) - 75, (root.height / 2.0) - 50
+        size: app.window_height / 5 * 2, app.window_height / 5
+        pos: (root.width / 2) - app.window_height / 10 * 2, (root.height / 2.0) - app.window_height / 10
         text: "Начать игру"
         background_normal: "blood_frame.png"
         background_down: "blood_frame.png"
@@ -37,8 +37,8 @@ FloatLayout:
             app.start_game()
     Button:
         size_hint: None, None
-        size: 150, 100
-        pos: 50, 50
+        size: app.window_height / 7 * 2, app.window_height / 7
+        pos: app.window_height / 15, app.window_height / 15
         text: "Об Игре"
         background_normal: "button_frame.png"
         background_down: "button_frame.png"
@@ -57,12 +57,11 @@ FloatLayout:
     BoxLayout:
         orientation: 'vertical'
         id: about_game
-        size: root.size[0] - 500, root.size[1] - 500
         pos: 0, 0
         opacity: 0.0
         Button:
             text: "Назад"
-            font_size: 40
+            font_size: app.window_height / 14
             size_hint: 0.8, 0.3
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             background_normal: "transparent.png"
@@ -78,11 +77,6 @@ FloatLayout:
                 # Включаем начало игры
                 start_game_button.disabled = False
         Image:
-            #text: "596181691"
-            #font_size: 20
-            #size_hint: 0.7, 1.5
-            #pos_hint: {'center_x': 0.5, 'center_y': 1}
-            #color: (255, 255, 255)
             source: "scroll.png"
             disabled: False
         Label:
@@ -95,7 +89,7 @@ FloatLayout:
         size_hint_y: None
         height: root.height + 250
         text: "Игра Flappy Ururu"
-        font_size: 25
+        font_size: app.window_height / 25
         color: (255, 255, 255)
         opacity: 0.0
     Label:
@@ -103,7 +97,7 @@ FloatLayout:
         size_hint_y: None
         height: root.height + 120
         text: "    Разработчик: Дракоша \n    Иллюстрации: Mr.Zapadlo \n    Задний фон: интернет"
-        font_size: 20
+        font_size: app.window_height / 35
         color: (255, 255, 255)
         opacity: 0.0
     Label:
@@ -111,12 +105,12 @@ FloatLayout:
         size_hint_y: None
         height: root.height - 70
         text: "    Вдохновитель: Ururu-chan \n    Поддержите Втубера"
-        font_size: 20
+        font_size: app.window_height / 35
         color: (255, 255, 255)
         opacity: 0.0
     Ururu:
         source: "ururu1.png"
         size_hint: None, None
-        size: 50, 80
+        size: app.window_height / 5 * 0.6, app.window_height / 5
         pos: 20, root.height / 2.0
         id: ururu

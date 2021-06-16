@@ -1,6 +1,8 @@
 from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ObjectProperty
 from kivy.uix.image import Image
+from kivy.core.window import Window
+
 
 
 # Ловушка паутина
@@ -8,6 +10,8 @@ class SpiderWeb(Widget):
     # Центр паутины и текстура
     web_position = NumericProperty(0)
     web_texture = ObjectProperty(None)
+    web_width = Window.height / 5
+    web_height = Window.height / 5
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
