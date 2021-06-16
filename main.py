@@ -28,7 +28,12 @@ class Background(Widget):
         # Создаем текстуру облаков
         self.cloud_texture = Image(source="cloud.png").texture
         self.cloud_texture.wrap = 'repeat'
-        self.cloud_texture.uvsize = (Window.width / self.cloud_texture.width, -1)
+        # Для адекватного отображения облаков
+        if was_portrait_orientation():
+            cloud_width = Window.width / self.cloud_texture.width - 1
+        else:
+            cloud_width = Window.width / self.cloud_texture.width
+        self.cloud_texture.uvsize = (cloud_width, -1)
 
         # Создаем текстуру города
         self.city_texture = Image(source="city.png").texture
@@ -76,9 +81,28 @@ class MainApp(App):
         window_height_button_start_game = Window.height / 5
     # Размеры кнопки "О Игре"
     if was_portrait_orientation():
-        window_height_button_about_game = Window.height / 20
+        window_height_button_about_game = Window.height / 12
     else:
         window_height_button_about_game = Window.height / 7
+    # Размеры между надписями в "Об Игре" (чем меньше число там дальше от центра)
+    if was_portrait_orientation():
+        window_height_text_1 = Window.height / 4
+        window_height_text_2 = Window.height / 5
+        window_height_text_3 = Window.height / 10
+    else:
+        window_height_text_1 = Window.height / 2
+        window_height_text_2 = Window.height / 6
+        window_height_text_3 = Window.height / 10
+    # Размеры текста в надписях в "Об Игре"
+    if was_portrait_orientation():
+        window_width_text_font_1 = Window.width / 20
+        window_width_text_font_2 = Window.width / 30
+        window_width_text_font_3 = Window.width / 30
+    else:
+        window_width_text_font_1 = Window.width / 40
+        window_width_text_font_2 = Window.width / 50
+        window_width_text_font_3 = Window.width / 50
+
 
     сomplexity = 1
     cobwebs = []
@@ -86,7 +110,7 @@ class MainApp(App):
     time = 0
 
     def on_start(self):
-        Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
+        Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/90.)
 
     # Заставляем Уруру двигаться вверх-вниз
     def move_ururu(self, time_passed):
