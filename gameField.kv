@@ -1,0 +1,39 @@
+#:include spiderWeb.kv
+
+FloatLayout:
+    Background:
+        id: background
+        canvas.before:
+            Rectangle:
+                size: self.size
+                pos: self.pos
+                source: "background.png"
+            Rectangle:
+                size: self.width, 131
+                pos: self.pos[0], self.pos[1] + self.height - 131
+                texture: self.cloud_texture
+            Rectangle:
+                size: self.width, 215
+                pos: self.pos[0], self.pos[1]
+                texture: self.city_texture
+    Label:
+        id: score
+        size_hint_y: None
+        height: 100
+        text: "0"
+        font_size: 40
+    Button:
+        text: "Начать игру"
+        background_normal: "transparent.png"
+        background_down: "transparent.png"
+        id: start_game_button
+        on_release:
+            self.disabled = True
+            self.opacity = 0
+            app.start_game()
+    Ururu:
+        source: "ururu1.png"
+        size_hint: None, None
+        size: 50, 80
+        pos: 20, root.height / 2.0
+        id: ururu
