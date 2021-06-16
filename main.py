@@ -59,7 +59,7 @@ class Ururu(Image):
         super().on_touch_up(touch)
 
 
-class GameFieldApp(App):
+class MainApp(App):
     cobwebs = []
     GRAVITY = 300
     time = 0
@@ -103,8 +103,11 @@ class GameFieldApp(App):
         for web in self.cobwebs:
             self.root.remove_widget(web)
         self.frames.cancel()
+        # Делаем снова активными кнопки
         self.root.ids.start_game_button.disabled = False
         self.root.ids.start_game_button.opacity = 1
+        self.root.ids.about_game_button.disabled = False
+        self.root.ids.about_game_button.opacity = 1
 
     def next_frame(self, time_passed):
         self.move_ururu(time_passed)
@@ -117,6 +120,10 @@ class GameFieldApp(App):
         self.cobwebs = []
         # Таймер
         self.frames = Clock.schedule_interval(self.next_frame, 1/60.)
+
+        # Скрываем кнопку "об игре"
+        self.root.ids.about_game_button.disabled = True
+        self.root.ids.about_game_button.opacity = 0
 
         # Создать паутину
         num_web = 50
@@ -143,4 +150,5 @@ class GameFieldApp(App):
             most_left_web = self.cobwebs[web_xs.index(min(web_xs))]
             most_left_web.x = Window.width
 
-GameFieldApp().run()
+if __name__ == "__main__":
+    MainApp().run()
