@@ -60,7 +60,7 @@ class MainApp(App):
     window_width = Window.width
     window_height = Window.height
     # Сложность и энергия
-    сomplexity = 1 # 1 , 1.5 , 2
+    сomplexity = 2 # 1 , 1.5 , 2
     energy = int(100 / сomplexity)
     max_energy = int(200 / сomplexity)
     # Для корректного списывания баллов при падении
@@ -71,7 +71,8 @@ class MainApp(App):
     bits = []
     drinks = []
     GRAVITY = (Window.height / 1.5) * сomplexity
-    time = 0
+    timer_score = 0
+    timer_is_down = 0
 
     def on_start(self):
         Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
@@ -81,10 +82,27 @@ class MainApp(App):
         ururu = self.root.ids.ururu
         ururu.y = ururu.y + ururu.velocity * time_passed
         ururu.velocity = ururu.velocity - self.GRAVITY * time_passed
+        self.check_collision_border()
         self.check_collision_web()
         self.check_collision_bit()
         self.check_collision_blood()
         self.check_collision_drink()
+
+    # Проверка на столкновение с границами
+    def check_collision_border(self):
+        ururu = self.root.ids.ururu
+        if ururu.y < 100:
+            ururu.velocity = - ururu.velocity
+            if not self.is_down:
+                MainApp.energy -= int(10 * MainApp.сomplexity)
+            ururu.source = "ururu_bonk.png"
+            self.is_down = True
+            self.timer_is_down = 0
+
+        if ururu.top > Window.height:
+            MainApp.energy -= int(10 * MainApp.сomplexity)
+            ururu.velocity -= (Window.height / 3) * MainApp.сomplexity
+            ururu.source = "ururu_bonk.png"
 
     # Проверяем на столкновение с паутиной
     def check_collision_web(self):
@@ -98,16 +116,6 @@ class MainApp(App):
                     ururu.source = "ururu_web.png"
                     self.root.remove_widget(web)
                     self.cobwebs.remove(web)
-        if ururu.y < 100 and not self.is_down:
-            ururu.velocity = - ururu.velocity
-            MainApp.energy -= int(10 * MainApp.сomplexity)
-            ururu.source = "ururu_bonk.png"
-            self.is_down = True
-
-        if ururu.top > Window.height:
-            MainApp.energy -= int(10 * MainApp.сomplexity)
-            ururu.velocity -= (Window.height / 3) * MainApp.сomplexity
-            ururu.source = "ururu_bonk.png"
 
     # Проверяем на столкновение с битой
     def check_collision_bit(self):
@@ -157,14 +165,23 @@ class MainApp(App):
         if MainApp.energy <= 0:
             self.game_over()
 
-    # Счетчик за жизнь, обновление энергии и обнуление проверки на столкновение с землей
-    def add_scrole(self, time_passed):
-        self.time += 1
+    # Обновление энергии
+    def energy_update(self, time_passed):
         self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
-        if self.time > 100:
-            self.root.ids.score.text = str(int(self.root.ids.score.text) + 1)
-            self.time = 0
+
+    # Обнуление проверки на слолкновение с землей
+    def is_down_update(self, time_passed):
+        self.timer_is_down += 1
+        if self.timer_is_down > 100:
+            self.timer_is_down = 0
             self.is_down = False
+
+    # Счетчик за жизнь
+    def add_scrole(self, time_passed):
+        self.timer_score += 1
+        if self.timer_score > 100:
+            self.root.ids.score.text = str(int(self.root.ids.score.text) + 1)
+            self.timer_score = 0
 
     def game_over(self):
         self.root.ids.ururu.source = "ururu3.png"
@@ -186,6 +203,7 @@ class MainApp(App):
         self.root.ids.about_game_button.opacity = 1
         self.root.ids.energy.opacity = 0
 
+    # Запуск всего того, что должно постоянно работать с таймером
     def next_frame(self, time_passed):
         self.move_ururu(time_passed)
         self.move_cobwebs(time_passed)
@@ -195,6 +213,8 @@ class MainApp(App):
         self.root.ids.background.scroll_textures(time_passed)
         self.add_scrole(time_passed)
         self.check_game_over(time_passed)
+        self.energy_update(time_passed)
+        self.is_down_update(time_passed)
 
     def start_game(self):
         self.root.ids.score.text = "0"
