@@ -69,9 +69,9 @@ class MainApp(App):
     window_width = Window.width
     window_height = Window.height
     # Сложность и энергия
-    сomplexity = 1 # 1 , 1.5 , 2
-    energy = int(100 / сomplexity)
-    max_energy = int(200 / сomplexity)
+    сomplexity = 2 # 1 , 1.5 , 2
+    energy = int(100)
+    max_energy = int(200)
     # Для корректного списывания баллов при падении
     is_down = False
     # Массивы с обьектами (ловушки и еда)
@@ -182,7 +182,7 @@ class MainApp(App):
     def energy_update(self, time_passed):
         self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
 
-    # Обнуление проверки на слолкновение с землей
+    # Обнуление проверки на замедление от удара
     def is_stop(self, time_passed):
         self.timer_stop += 1
         if self.timer_stop > 100:
@@ -203,6 +203,7 @@ class MainApp(App):
             self.root.ids.score.text = str(int(self.root.ids.score.text) + 1)
             self.timer_score = 0
 
+    # конец игры
     def game_over(self):
         self.root.ids.ururu.source = "ururu3.png"
         self.root.ids.ururu.pos = (20, self.root.height / 2.0)
@@ -258,7 +259,7 @@ class MainApp(App):
 
         # Создать паутину
         for i in range(30):
-            distance_between_web = randint(int((Window.height / 3) / MainApp.сomplexity), int((Window.height / 2.5) / MainApp.сomplexity))
+            distance_between_web = randint(int(Window.height / 3), int(Window.height / 2.5))
             web = SpiderWeb()
             web.web_position = randint(50, Window.height - 100)
             web.size_hint = (None, None)
@@ -270,7 +271,7 @@ class MainApp(App):
 
         # Создать биты
         for i in range(5):
-            distance_between_bit = randint(int((Window.height * 4) / MainApp.сomplexity), int((Window.height * 6) / MainApp.сomplexity))
+            distance_between_bit = randint(int(Window.height * 4), int(Window.height * 6))
             bit = Bit()
             bit.bit_position = randint(50, Window.height - 100)
             bit.size_hint = (None, None)
@@ -282,7 +283,7 @@ class MainApp(App):
 
         # Создать кровушку
         for i in range(30):
-            distance_between_blood = randint(int((Window.height * 4) * MainApp.сomplexity), int((Window.height * 6) * MainApp.сomplexity))
+            distance_between_blood = randint(int(Window.height * 4), int(Window.height * 6))
             blood = BloodBag()
             blood.blood_position = randint(50, Window.height - 100)
             blood.size_hint = (None, None)
@@ -294,7 +295,7 @@ class MainApp(App):
 
         # Создать энергосик
         for i in range(30):
-            distance_between_drink = randint(int((Window.height * 2) * MainApp.сomplexity), int((Window.height * 3) * MainApp.сomplexity))
+            distance_between_drink = randint(int(Window.height * 2), int(Window.height * 3))
             drink = EnergyDrink()
             drink.drink_position = randint(50, Window.height - 100)
             drink.size_hint = (None, None)
@@ -318,7 +319,7 @@ class MainApp(App):
         web_xs = list(map(lambda web: web.x, self.cobwebs))
         right_most_x = max(web_xs)
         if right_most_x <= Window.width:
-            distance_between_web = randint(int((Window.height / 3) / MainApp.сomplexity), int((Window.height / 2.5) / MainApp.сomplexity))
+            distance_between_web = randint(int(Window.height / 3), int(Window.height / 2.5))
             for i in range(20):
                 web = SpiderWeb()
                 web.web_position = randint(50, Window.height - 100)
@@ -344,7 +345,7 @@ class MainApp(App):
         right_most_x = max(bit_xs)
         if right_most_x <= Window.width:
             for i in range(5):
-                distance_between_bit = randint(int((Window.height * 4) / MainApp.сomplexity), int((Window.height * 6) / MainApp.сomplexity))
+                distance_between_bit = randint(int(Window.height * 4), int(Window.height * 6))
                 bit = Bit()
                 bit.bit_position = randint(50, Window.height - 100)
                 bit.size_hint = (None, None)
@@ -369,7 +370,7 @@ class MainApp(App):
         right_most_x = max(blood_xs)
         if right_most_x <= Window.width:
             for i in range(20):
-                distance_between_blood = randint(int((Window.height * 4) * MainApp.сomplexity), int((Window.height * 6) * MainApp.сomplexity))
+                distance_between_blood = randint(int(Window.height * 4), int(Window.height * 6))
                 blood = BloodBag()
                 blood.blood_position = randint(50, Window.height - 100)
                 blood.size_hint = (None, None)
@@ -394,7 +395,7 @@ class MainApp(App):
         right_most_x = max(drink_xs)
         if right_most_x <= Window.width:
             for i in range(20):
-                distance_between_drink = randint(int((Window.height * 2) * MainApp.сomplexity), int((Window.height * 3) * MainApp.сomplexity))
+                distance_between_drink = randint(int(Window.height * 2), int(Window.height * 3))
                 drink = EnergyDrink()
                 drink.drink_position = randint(50, Window.height - 100)
                 drink.size_hint = (None, None)
