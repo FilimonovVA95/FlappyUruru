@@ -1,5 +1,8 @@
+import ast
+import os
 from random import randint
 from kivy.app import App
+from kivy.config import ConfigParser
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.uix.image import Image
@@ -85,9 +88,40 @@ class MainApp(App):
     timer_score = 0
     timer_is_down = 0
     timer_stop = 0
+    # Настройки
+    speed = None
+    is_increasing_complexity = None
+    max_score = None
 
+    # Инициализация записи
+    def __init__(self, **kvargs):
+        super(MainApp, self).__init__(**kvargs)
+        self.config = ConfigParser()
+
+    # Записываем по умолчанию
+    def build_config(self, config):
+        config.adddefaultsection('General')
+        config.setdefault('General', 'speed', "1")
+        config.setdefault('General', 'is_increasing_complexity', False)
+        config.setdefault('General', 'max_score', "0")
+
+    def set_value_from_config(self):
+        self.config.read(os.path.join(self.directory, '%(appname)s.ini'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'speed'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'is_increasing_complexity'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'max_score'))
+
+    def get_application_config(self):
+        return super(MainApp, self).get_application_config('{}/%(appname)s.ini'.format(self.directory))
+
+    # Старт
     def on_start(self):
         Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
+        self.app = App.get_running_app()
+        # Считывание данных при запуске
+        MainApp.speed = self.app.config.get('General', 'speed')
+        MainApp.is_increasing_complexity = self.app.config.get('General', 'is_increasing_complexity')
+        MainApp.max_score = int(self.app.config.get('General', 'max_score'))
 
     # Заставляем Уруру двигаться вверх-вниз
     def move_ururu(self, time_passed):
@@ -207,6 +241,13 @@ class MainApp(App):
 
     # конец игры
     def game_over(self):
+        # Обновление лучшего результата
+        if int(self.root.ids.score.text) > MainApp.max_score:
+            MainApp.max_score = int(self.root.ids.score.text)
+            self.config.set('General', 'max_score', str(MainApp.max_score))
+            self.app.config.write()
+            self.root.ids.max_score.text = str("Лучший результат: " + str(self.config.get('General', 'max_score')))
+
         self.root.ids.ururu.source = "Images/ururu3.png"
         self.root.ids.ururu.pos = (20, self.root.height / 2.0)
         # Удаляем ловушки и еду
@@ -244,8 +285,15 @@ class MainApp(App):
         self.is_stop(time_passed)
 
     def start_game(self):
+        # Считывание данных
+        MainApp.speed = self.app.config.get('General', 'speed')
+        MainApp.is_increasing_complexity = self.app.config.get('General', 'is_increasing_complexity')
+        MainApp.max_score = int(self.app.config.get('General', 'max_score'))
+
+        # Обнуление счета и энергии
         self.root.ids.score.text = "0"
         MainApp.energy = int(100)
+
         # Инициализируем массивы и делаем их пустыми (чтобы с прошлой игры не осталось)
         self.cobwebs = []
         self.blood_bags = []

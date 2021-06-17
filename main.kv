@@ -23,6 +23,16 @@ FloatLayout:
         height: app.window_height / 5
         text: "0"
         font_size: app.window_height / 14
+    Label:
+        id: max_score
+        size_hint_y: None
+        size_hint_x: None
+        #height: app.window_height / 5
+        #width: app.window_width
+        height: app.window_height / 5
+        width: app.window_width * 1.4
+        text: "Лучший результат: " + str(app.config.get('General', 'max_score'))
+        font_size: app.window_height / 14
     Button:
         size_hint: None, None
         size: app.window_height / 5 * 2, app.window_height / 5
@@ -90,7 +100,7 @@ FloatLayout:
         id: about_game_text1
         size_hint_y: None
         height: root.height + app.window_height / 2
-        text: "Игра Flappy Ururu v0.4.9"
+        text: "Игра Flappy Ururu v0.5.1"
         font_size: app.window_width / 45
         color: (255, 255, 255)
         opacity: 0.0
@@ -113,9 +123,9 @@ FloatLayout:
     Label:
         id: energy
         size_hint_y: None
-        pos: -app.window_height / 2.3, app.window_height / 14
+        pos: -app.window_height / 2.2, app.window_height / 14
         text: "Энергия: " + str(app.energy) + " / " + str(app.max_energy)
-        font_size: app.window_height / 25
+        font_size: app.window_height / 20
         color: 1, 0, 0, 1
         opacity: 0.0
     Ururu:
