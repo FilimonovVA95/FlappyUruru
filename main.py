@@ -199,6 +199,11 @@ class MainApp(App):
     def start_game(self):
         self.root.ids.score.text = "0"
         MainApp.energy = int(100)
+        # Инициализируем массивы и делаем их пустыми (чтобы с прошлой игры не осталось)
+        MainApp.cobwebs = []
+        MainApp.blood_bags = []
+        MainApp.bits = []
+        MainApp.drinks = []
         self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
         # Таймер
         self.frames = Clock.schedule_interval(self.next_frame, 1/60.)
@@ -211,7 +216,7 @@ class MainApp(App):
         for i in range(200):
             distance_between_web = randint((Window.height / 3) / MainApp.сomplexity, (Window.height / 2.5) / MainApp.сomplexity)
             web = SpiderWeb()
-            web.web_position = randint(50, self.root.height - 100)
+            web.web_position = randint(50, Window.height - 100)
             web.size_hint = (None, None)
             web.pos = (Window.width + i * distance_between_web, web.web_position)
             web.size = (Window.height / 5, Window.height / 5)
@@ -223,7 +228,7 @@ class MainApp(App):
         for i in range(100):
             distance_between_bit = randint((Window.height * 4) / MainApp.сomplexity, (Window.height * 6) / MainApp.сomplexity)
             bit = Bit()
-            bit.bit_position = randint(50, self.root.height - 100)
+            bit.bit_position = randint(50, Window.height - 100)
             bit.size_hint = (None, None)
             bit.pos = (250 + Window.width + i * distance_between_bit, bit.bit_position)
             bit.size = (Window.height / 5, Window.height / 5)
@@ -235,7 +240,7 @@ class MainApp(App):
         for i in range(200):
             distance_between_blood = randint((Window.height * 4) * MainApp.сomplexity, (Window.height * 6) * MainApp.сomplexity)
             blood = BloodBag()
-            blood.blood_position = randint(50, self.root.height - 100)
+            blood.blood_position = randint(50, Window.height - 100)
             blood.size_hint = (None, None)
             blood.pos = (700 + Window.width + i * distance_between_blood, blood.blood_position)
             blood.size = (Window.height / 5, Window.height / 5)
@@ -247,7 +252,7 @@ class MainApp(App):
         for i in range(200):
             distance_between_drink = randint((Window.height * 2) * MainApp.сomplexity, (Window.height * 3) * MainApp.сomplexity)
             drink = EnergyDrink()
-            drink.drink_position = randint(50, self.root.height - 100)
+            drink.drink_position = randint(50, Window.height - 100)
             drink.size_hint = (None, None)
             drink.pos = (500 + Window.width + i * distance_between_drink, drink.drink_position)
             drink.size = (Window.height / 5, Window.height / 5)
@@ -272,7 +277,7 @@ class MainApp(App):
             distance_between_web = randint((Window.height / 3) / MainApp.сomplexity, (Window.height / 2.5) / MainApp.сomplexity)
             for i in range(20):
                 web = SpiderWeb()
-                web.web_position = randint(50, self.root.height - 100)
+                web.web_position = randint(50, Window.height - 100)
                 web.size_hint = (None, None)
                 web.pos = (Window.width + i * distance_between_web, web.web_position)
                 web.size = (Window.height / 5, Window.height / 5)
@@ -297,7 +302,7 @@ class MainApp(App):
             for i in range(5):
                 distance_between_bit = randint((Window.height * 4) / MainApp.сomplexity, (Window.height * 6) / MainApp.сomplexity)
                 bit = Bit()
-                bit.bit_position = randint(50, self.root.height - 100)
+                bit.bit_position = randint(50, Window.height - 100)
                 bit.size_hint = (None, None)
                 bit.pos = (Window.width + i * distance_between_bit, bit.bit_position)
                 bit.size = (Window.height / 5, Window.height / 5)
@@ -322,7 +327,7 @@ class MainApp(App):
             for i in range(20):
                 distance_between_blood = (Window.height * 5) * MainApp.сomplexity
                 blood = BloodBag()
-                blood.blood_position = randint(50, self.root.height - 100)
+                blood.blood_position = randint(50, Window.height - 100)
                 blood.size_hint = (None, None)
                 blood.pos = (Window.width + i * distance_between_blood, blood.blood_position)
                 blood.size = (Window.height / 5, Window.height / 5)
@@ -347,7 +352,7 @@ class MainApp(App):
             for i in range(20):
                 distance_between_drink = randint((Window.height * 2) * MainApp.сomplexity, (Window.height * 3) * MainApp.сomplexity)
                 drink = EnergyDrink()
-                drink.drink_position = randint(50, self.root.height - 100)
+                drink.drink_position = randint(50, Window.height - 100)
                 drink.size_hint = (None, None)
                 drink.pos = (500 + Window.width + i * distance_between_drink, drink.drink_position)
                 drink.size = (Window.height / 5, Window.height / 5)
