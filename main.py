@@ -45,22 +45,31 @@ class Ururu(Image):
     velocity = NumericProperty(0)
 
     def on_touch_down(self, touch):
-        self.source = "ururu2.png"
-        self.velocity = (Window.height / 3) * MainApp.сomplexity
-        MainApp.energy -= 1
-        super().on_touch_down(touch)
+        if not MainApp.is_stop_marker:
+            self.source = "ururu2.png"
+            self.velocity = (Window.height / 3) * MainApp.сomplexity
+            MainApp.energy -= 1
+            super().on_touch_down(touch)
+        else:
+            self.source = "ururu_bonk.png"
 
     def on_touch_up(self, touch):
-        self.source = "ururu1.png"
-        super().on_touch_up(touch)
+        if not MainApp.is_stop_marker:
+            self.source = "ururu1.png"
+            super().on_touch_up(touch)
+        else:
+            self.source = "ururu_bonk.png"
 
 
 class MainApp(App):
+    # Для реализации замедления про ударе битой
+    bonk_factor = 1
+    is_stop_marker = False
     # Размеры экрана
     window_width = Window.width
     window_height = Window.height
     # Сложность и энергия
-    сomplexity = 2 # 1 , 1.5 , 2
+    сomplexity = 1 # 1 , 1.5 , 2
     energy = int(100 / сomplexity)
     max_energy = int(200 / сomplexity)
     # Для корректного списывания баллов при падении
@@ -73,6 +82,7 @@ class MainApp(App):
     GRAVITY = (Window.height / 1.5) * сomplexity
     timer_score = 0
     timer_is_down = 0
+    timer_stop = 0
 
     def on_start(self):
         Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
@@ -81,7 +91,7 @@ class MainApp(App):
     def move_ururu(self, time_passed):
         ururu = self.root.ids.ururu
         ururu.y = ururu.y + ururu.velocity * time_passed
-        ururu.velocity = ururu.velocity - self.GRAVITY * time_passed
+        ururu.velocity = ururu.velocity - self.GRAVITY * time_passed / MainApp.bonk_factor
         self.check_collision_border()
         self.check_collision_web()
         self.check_collision_bit()
@@ -96,7 +106,7 @@ class MainApp(App):
             if not self.is_down:
                 MainApp.energy -= int(10 * MainApp.сomplexity)
             ururu.source = "ururu_bonk.png"
-            self.is_down = True
+            self.is_down = False
             self.timer_is_down = 0
 
         if ururu.top > Window.height:
@@ -129,6 +139,9 @@ class MainApp(App):
                     ururu.source = "ururu_bonk.png"
                     self.root.remove_widget(bit)
                     self.bits.remove(bit)
+                    self.timer_stop = 0
+                    MainApp.bonk_factor = 4
+                    MainApp.is_stop_marker = True
 
     # Проверяем на столкновение с кровушкой
     def check_collision_blood(self):
@@ -170,6 +183,13 @@ class MainApp(App):
         self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
 
     # Обнуление проверки на слолкновение с землей
+    def is_stop(self, time_passed):
+        self.timer_stop += 1
+        if self.timer_stop > 100:
+            MainApp.bonk_factor = 1
+            MainApp.is_stop_marker = False
+
+    # Обнуление проверки на слолкновение с землей
     def is_down_update(self, time_passed):
         self.timer_is_down += 1
         if self.timer_is_down > 100:
@@ -202,6 +222,9 @@ class MainApp(App):
         self.root.ids.about_game_button.disabled = False
         self.root.ids.about_game_button.opacity = 1
         self.root.ids.energy.opacity = 0
+        # Сбрасываем если были оглушены
+        MainApp.bonk_factor = 1
+        MainApp.is_stop_marker = False
 
     # Запуск всего того, что должно постоянно работать с таймером
     def next_frame(self, time_passed):
@@ -215,6 +238,7 @@ class MainApp(App):
         self.check_game_over(time_passed)
         self.energy_update(time_passed)
         self.is_down_update(time_passed)
+        self.is_stop(time_passed)
 
     def start_game(self):
         self.root.ids.score.text = "0"
@@ -284,7 +308,7 @@ class MainApp(App):
     def move_cobwebs(self, time_passed):
         # Двигаем паутину
         for web in self.cobwebs:
-            web.x -= time_passed * 900 * self.сomplexity
+            web.x -= time_passed * 900 * self.сomplexity / MainApp.bonk_factor
             # Если паутина ушла за границу - удаляем ее
             if (web.pos[0] < - Window.width):
                 self.root.remove_widget(web)
@@ -309,7 +333,7 @@ class MainApp(App):
     def move_bits(self, time_passed):
         # Двигаем биты
         for bit in self.bits:
-            bit.x -= time_passed * 900 * self.сomplexity
+            bit.x -= time_passed * 900 * self.сomplexity / MainApp.bonk_factor
             # Если бита ушла за границу - удаляем ее
             if (bit.pos[0] < - Window.width):
                 self.root.remove_widget(bit)
@@ -334,7 +358,7 @@ class MainApp(App):
     def move_blood_bags(self, time_passed):
         # Двигаем кровушку
         for blood in self.blood_bags:
-            blood.x -= time_passed * 1200 * self.сomplexity
+            blood.x -= time_passed * 1200 * self.сomplexity / MainApp.bonk_factor
             # Если кровушка ушла за границу - удаляем ее
             if (blood.pos[0] < - Window.width):
                 self.root.remove_widget(blood)
@@ -359,7 +383,7 @@ class MainApp(App):
     def move_driks(self, time_passed):
         # Двигаем энергосики
         for drink in self.drinks:
-            drink.x -= time_passed * 1200 * self.сomplexity
+            drink.x -= time_passed * 1200 * self.сomplexity / MainApp.bonk_factor
             # Если энергосик ушел за границу - удаляем его
             if (drink.pos[0] < - Window.width):
                 self.root.remove_widget(drink)
