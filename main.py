@@ -6,6 +6,7 @@ from kivy.uix.image import Image
 from kivy.core.window import Window
 from kivy.clock import Clock
 from spiderWeb import SpiderWeb
+import time
 
 
 # Задний фон
@@ -56,7 +57,12 @@ class MainApp(App):
     # Размеры экрана
     window_width = Window.width
     window_height = Window.height
+    # Сложность и энергия
     сomplexity = 1
+    energy = int(100 / сomplexity)
+    max_energy = int(200 / сomplexity)
+    # Для корректного списывания баллов при падении
+    is_down = False
     cobwebs = []
     GRAVITY = (Window.height / 1.5) * сomplexity
     time = 0
@@ -69,30 +75,46 @@ class MainApp(App):
         ururu = self.root.ids.ururu
         ururu.y = ururu.y + ururu.velocity * time_passed
         ururu.velocity = ururu.velocity - self.GRAVITY * time_passed
-        self.check_collision_game_over()
+        self.check_collision()
 
-    # Проверяем на столкновение на конец игры
-    def check_collision_game_over(self):
+    # Проверяем на столкновение
+    def check_collision(self):
         ururu = self.root.ids.ururu
         for web in self.cobwebs:
             # Проверяем что позиция сетки по горизонту 20 +/- "толщина" сетки "тольщина" Ури
             if (web.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (web.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
                 if abs(web.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    self.game_over()
+                    MainApp.energy -= 10 * MainApp.сomplexity
+                    self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
+                    ururu.source = "ururu3.png"
                     self.root.remove_widget(web)
                     self.cobwebs.remove(web)
-        if ururu.y < 100:
-            self.game_over()
+        if ururu.y < 100 and not self.is_down:
+            ururu.velocity = - ururu.velocity
+            MainApp.energy -= 10 * MainApp.сomplexity
+            self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
+            ururu.source = "ururu3.png"
+            self.is_down = True
+
         if ururu.top > Window.height:
+            MainApp.energy -= 10 * MainApp.сomplexity
+            self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
+            ururu.velocity -= (Window.height / 3) * MainApp.сomplexity
+            ururu.source = "ururu3.png"
+
+    # Проверяем на конец игры
+    def check_game_over(self, time_passed):
+        if MainApp.energy <= 0:
             self.game_over()
 
-    # Счетчик за жизнь
+    # Счетчик за жизнь и обнуление проверки на столкновение с землей
     def add_scrole(self, time_passed):
         self.time += 1
         if self.time > 100:
             self.root.ids.score.text = str(int(self.root.ids.score.text) + 1)
             self.time = 0
+            self.is_down = False
 
     def game_over(self):
         self.root.ids.ururu.source = "ururu3.png"
@@ -105,16 +127,20 @@ class MainApp(App):
         self.root.ids.start_game_button.opacity = 1
         self.root.ids.about_game_button.disabled = False
         self.root.ids.about_game_button.opacity = 1
+        self.root.ids.energy.opacity = 0
 
     def next_frame(self, time_passed):
         self.move_ururu(time_passed)
         self.move_cobwebs(time_passed)
         self.root.ids.background.scroll_textures(time_passed)
         self.add_scrole(time_passed)
+        self.check_game_over(time_passed)
 
     def start_game(self):
         self.root.ids.score.text = "0"
         self.cobwebs = []
+        MainApp.energy = int(100)
+        self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
         # Таймер
         self.frames = Clock.schedule_interval(self.next_frame, 1/90.)
 

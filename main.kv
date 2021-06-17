@@ -35,6 +35,7 @@ FloatLayout:
             self.disabled = True
             self.opacity = 0
             app.start_game()
+            energy.opacity = 1
     Button:
         size_hint: None, None
         size: app.window_height / 7 * 2, app.window_height / 7
@@ -88,7 +89,7 @@ FloatLayout:
         id: about_game_text1
         size_hint_y: None
         height: root.height + app.window_height / 2
-        text: "Игра Flappy Ururu v0.3.3"
+        text: "Игра Flappy Ururu v0.3.4"
         font_size: app.window_width / 45
         color: (255, 255, 255)
         opacity: 0.0
@@ -107,6 +108,14 @@ FloatLayout:
         text: "    Вдохновитель: Ururu-chan \n    Поддержите Втубера"
         font_size: app.window_width / 55
         color: (255, 255, 255)
+        opacity: 0.0
+    Label:
+        id: energy
+        size_hint_y: None
+        pos: -app.window_height / 2.3, app.window_height / 14
+        text: "Энергия: " + str(app.energy) + " / " + str(app.max_energy)
+        font_size: app.window_height / 25
+        color: 1, 0, 0, 1
         opacity: 0.0
     Ururu:
         source: "ururu1.png"
