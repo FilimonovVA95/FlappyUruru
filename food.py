@@ -16,7 +16,7 @@ class BloodBag(Widget):
         super().__init__(**kwargs)
 
         # Создаем текстуру кровушки
-        self.blood_texture = Image(source="bloodBag.png").texture
+        self.blood_texture = Image(source="Images/bloodBag.png").texture
         self.blood_texture.wrap = 'repeat'
 
 # Банка энергоса
@@ -31,5 +31,5 @@ class EnergyDrink(Widget):
         super().__init__(**kwargs)
 
         # Создаем баночки энергоса
-        self.drink_texture = Image(source="energy_drink.png").texture
+        self.drink_texture = Image(source="Images/energy_drink.png").texture
         self.drink_texture.wrap = 'repeat'

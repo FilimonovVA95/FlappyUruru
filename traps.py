@@ -16,7 +16,7 @@ class SpiderWeb(Widget):
         super().__init__(**kwargs)
 
         # Создаем текстуру паутины
-        self.web_texture = Image(source="spider_web.png").texture
+        self.web_texture = Image(source="Images/spider_web.png").texture
         self.web_texture.wrap = 'repeat'
 
 
@@ -32,6 +32,6 @@ class Bit(Widget):
         super().__init__(**kwargs)
 
         # Создаем текстуру паутины
-        self.bit_texture = Image(source="bit.png").texture
+        self.bit_texture = Image(source="Images/bit.png").texture
         self.bit_texture.wrap = 'repeat'
 

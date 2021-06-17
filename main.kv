@@ -8,7 +8,7 @@ FloatLayout:
             Rectangle:
                 size: self.size
                 pos: self.pos
-                source: "background.png"
+                source: "Images/background.png"
             Rectangle:
                 size: self.width, app.window_height / 5
                 pos: self.pos[0], self.pos[1] + self.height - app.window_height / 5
@@ -28,8 +28,8 @@ FloatLayout:
         size: app.window_height / 5 * 2, app.window_height / 5
         pos: (root.width / 2.0) - app.window_height / 5, (root.height / 2.0) - app.window_height / 10
         text: "Начать игру"
-        background_normal: "start_game.png"
-        background_down: "start_game.png"
+        background_normal: "Images/start_game.png"
+        background_down: "Images/start_game.png"
         id: start_game_button
         disabled: False
         on_release:
@@ -42,8 +42,8 @@ FloatLayout:
         size: app.window_height / 7 * 2, app.window_height / 7
         pos: app.window_height / 14, app.window_height / 14
         text: "Об Игре"
-        background_normal: "button_frame.png"
-        background_down: "button_frame.png"
+        background_normal: "Images/button_frame.png"
+        background_down: "Images/button_frame.png"
         id: about_game_button
         opacity: 1.0
         on_release:
@@ -66,8 +66,8 @@ FloatLayout:
             font_size: app.window_height / 14
             size_hint: 0.8, 0.3
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            background_normal: "transparent.png"
-            background_down: "transparent.png"
+            background_normal: "Images/transparent.png"
+            background_down: "Images/transparent.png"
             on_release:
                 # Скрываем информацию
                 about_game.opacity = 0
@@ -79,7 +79,7 @@ FloatLayout:
                 # Включаем начало игры
                 start_game_button.disabled = False
         Image:
-            source: "scroll.png"
+            source: "Images/scroll.png"
             disabled: False
         Label:
             size_hint: 0.8, 0.5
@@ -119,7 +119,7 @@ FloatLayout:
         color: 1, 0, 0, 1
         opacity: 0.0
     Ururu:
-        source: "ururu1.png"
+        source: "Images/ururu1.png"
         size_hint: None, None
         size: app.window_height / 5 * 0.6, app.window_height / 5
         pos: 20, root.height / 2.0

@@ -20,12 +20,12 @@ class Background(Widget):
         super().__init__(**kwargs)
 
         # Создаем текстуру облаков
-        self.cloud_texture = Image(source="cloud.png").texture
+        self.cloud_texture = Image(source="Images/cloud.png").texture
         self.cloud_texture.wrap = 'repeat'
         self.cloud_texture.uvsize = (Window.width / self.cloud_texture.width, -1)
 
         # Создаем текстуру города
-        self.city_texture = Image(source="city.png").texture
+        self.city_texture = Image(source="Images/city.png").texture
         self.city_texture.wrap = 'repeat'
         self.city_texture.uvsize = (Window.width / self.city_texture.width, -1)
 
@@ -46,19 +46,19 @@ class Ururu(Image):
 
     def on_touch_down(self, touch):
         if not MainApp.is_stop_marker:
-            self.source = "ururu2.png"
+            self.source = "Images/ururu2.png"
             self.velocity = (Window.height / 3) * (1 + 0.1 * MainApp.сomplexity)
             MainApp.energy -= 1
             super().on_touch_down(touch)
         else:
-            self.source = "ururu_bonk.png"
+            self.source = "Images/ururu_bonk.png"
 
     def on_touch_up(self, touch):
         if not MainApp.is_stop_marker:
-            self.source = "ururu1.png"
+            self.source = "Images/ururu1.png"
             super().on_touch_up(touch)
         else:
-            self.source = "ururu_bonk.png"
+            self.source = "Images/ururu_bonk.png"
 
 
 class MainApp(App):
@@ -79,7 +79,9 @@ class MainApp(App):
     blood_bags = []
     bits = []
     drinks = []
+    # Гравитация
     GRAVITY = (Window.height / 1.5) * (1 + 0.1 * сomplexity)
+    # таймеры для отсчета состояний
     timer_score = 0
     timer_is_down = 0
     timer_stop = 0
@@ -105,14 +107,14 @@ class MainApp(App):
             ururu.velocity = - ururu.velocity
             if not self.is_down:
                 MainApp.energy -= int(10 * (1 + 0.1 * MainApp.сomplexity))
-            ururu.source = "ururu_bonk.png"
+            ururu.source = "Images/ururu_bonk.png"
             self.is_down = False
             self.timer_is_down = 0
 
         if ururu.top > Window.height:
             MainApp.energy -= int(10 * MainApp.сomplexity)
             ururu.velocity -= (Window.height / 3) * (1 + 0.1 * MainApp.сomplexity)
-            ururu.source = "ururu_bonk.png"
+            ururu.source = "Images/ururu_bonk.png"
 
     # Проверяем на столкновение с паутиной
     def check_collision_web(self):
@@ -123,7 +125,7 @@ class MainApp(App):
                 # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
                 if abs(web.pos[1] - ururu.pos[1]) < Window.height / 7:
                     MainApp.energy -= int(10 * (1 + 0.1 * MainApp.сomplexity))
-                    ururu.source = "ururu_web.png"
+                    ururu.source = "Images/ururu_web.png"
                     self.root.remove_widget(web)
                     self.cobwebs.remove(web)
 
@@ -136,7 +138,7 @@ class MainApp(App):
                 # Проверяем что разница центров Ури и биты меньше сумарного их половинного размера
                 if abs(bit.pos[1] - ururu.pos[1]) < Window.height / 7:
                     MainApp.energy -= int(30 * (1 + 0.1 * MainApp.сomplexity))
-                    ururu.source = "ururu_bonk.png"
+                    ururu.source = "Images/ururu_bonk.png"
                     self.root.remove_widget(bit)
                     self.bits.remove(bit)
                     self.timer_stop = 0
@@ -154,7 +156,7 @@ class MainApp(App):
                     MainApp.energy += int(30 / (1 + 0.1 * MainApp.сomplexity))
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
-                    ururu.source = "ururu_blood.png"
+                    ururu.source = "Images/ururu_blood.png"
                     self.root.remove_widget(blood)
                     self.blood_bags.remove(blood)
 
@@ -169,7 +171,7 @@ class MainApp(App):
                     MainApp.energy += int(20 / (1 + 0.1 * MainApp.сomplexity))
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
-                    ururu.source = "ururu_drink.png"
+                    ururu.source = "Images/ururu_drink.png"
                     self.root.remove_widget(drink)
                     self.drinks.remove(drink)
 
@@ -205,7 +207,7 @@ class MainApp(App):
 
     # конец игры
     def game_over(self):
-        self.root.ids.ururu.source = "ururu3.png"
+        self.root.ids.ururu.source = "Images/ururu3.png"
         self.root.ids.ururu.pos = (20, self.root.height / 2.0)
         # Удаляем ловушки и еду
         for web in self.cobwebs:
