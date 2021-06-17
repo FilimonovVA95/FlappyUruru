@@ -208,7 +208,7 @@ class MainApp(App):
         self.root.ids.about_game_button.opacity = 0
 
         # Создать паутину
-        for i in range(20):
+        for i in range(50):
             distance_between_web = randint((Window.height / 3) / MainApp.сomplexity, (Window.height / 2.5) / MainApp.сomplexity)
             web = SpiderWeb()
             web.web_position = randint(50, self.root.height - 100)
@@ -220,7 +220,7 @@ class MainApp(App):
             self.root.add_widget(web)
 
         # Создать биты
-        for i in range(5):
+        for i in range(20):
             distance_between_bit = randint((Window.height * 4) / MainApp.сomplexity, (Window.height * 6) / MainApp.сomplexity)
             bit = Bit()
             bit.bit_position = randint(50, self.root.height - 100)
@@ -232,7 +232,7 @@ class MainApp(App):
             self.root.add_widget(bit)
 
         # Создать кровушку
-        for i in range(20):
+        for i in range(50):
             distance_between_blood = randint((Window.height * 4) * MainApp.сomplexity, (Window.height * 6) * MainApp.сomplexity)
             blood = BloodBag()
             blood.blood_position = randint(50, self.root.height - 100)
@@ -244,7 +244,7 @@ class MainApp(App):
             self.root.add_widget(blood)
 
         # Создать энергосик
-        for i in range(20):
+        for i in range(50):
             distance_between_drink = randint((Window.height * 2) * MainApp.сomplexity, (Window.height * 3) * MainApp.сomplexity)
             drink = EnergyDrink()
             drink.drink_position = randint(50, self.root.height - 100)
