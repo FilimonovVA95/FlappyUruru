@@ -4,7 +4,6 @@ from kivy.uix.image import Image
 from kivy.core.window import Window
 
 
-
 # Ловушка паутина
 class SpiderWeb(Widget):
     # Центр паутины и текстура
