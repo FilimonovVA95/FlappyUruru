@@ -95,19 +95,19 @@ class MainApp(App):
                 # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
                 if abs(web.pos[1] - ururu.pos[1]) < Window.height / 7:
                     MainApp.energy -= int(10 * MainApp.сomplexity)
-                    ururu.source = "ururu3.png"
+                    ururu.source = "ururu_web.png"
                     self.root.remove_widget(web)
                     self.cobwebs.remove(web)
         if ururu.y < 100 and not self.is_down:
             ururu.velocity = - ururu.velocity
             MainApp.energy -= int(10 * MainApp.сomplexity)
-            ururu.source = "ururu3.png"
+            ururu.source = "ururu_bonk.png"
             self.is_down = True
 
         if ururu.top > Window.height:
             MainApp.energy -= int(10 * MainApp.сomplexity)
             ururu.velocity -= (Window.height / 3) * MainApp.сomplexity
-            ururu.source = "ururu3.png"
+            ururu.source = "ururu_bonk.png"
 
     # Проверяем на столкновение с битой
     def check_collision_bit(self):
@@ -118,7 +118,7 @@ class MainApp(App):
                 # Проверяем что разница центров Ури и биты меньше сумарного их половинного размера
                 if abs(bit.pos[1] - ururu.pos[1]) < Window.height / 7:
                     MainApp.energy -= int(30 * MainApp.сomplexity)
-                    ururu.source = "ururu3.png"
+                    ururu.source = "ururu_bonk.png"
                     self.root.remove_widget(bit)
                     self.bits.remove(bit)
 
@@ -133,7 +133,7 @@ class MainApp(App):
                     MainApp.energy += int(30 / MainApp.сomplexity)
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
-                    ururu.source = "ururu3.png"
+                    ururu.source = "ururu_blood.png"
                     self.root.remove_widget(blood)
                     self.blood_bags.remove(blood)
 
@@ -148,7 +148,7 @@ class MainApp(App):
                     MainApp.energy += int(20 / MainApp.сomplexity)
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
-                    ururu.source = "ururu3.png"
+                    ururu.source = "ururu_drink.png"
                     self.root.remove_widget(drink)
                     self.drinks.remove(drink)
 
@@ -198,47 +198,42 @@ class MainApp(App):
 
     def start_game(self):
         self.root.ids.score.text = "0"
-        self.cobwebs = []
-        self.blood_bags = []
         MainApp.energy = int(100)
         self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
         # Таймер
-        self.frames = Clock.schedule_interval(self.next_frame, 1/90.)
+        self.frames = Clock.schedule_interval(self.next_frame, 1/60.)
 
         # Скрываем кнопку "об игре"
         self.root.ids.about_game_button.disabled = True
         self.root.ids.about_game_button.opacity = 0
 
         # Создать паутину
-        num_web = 200
-        distance_between_web = (Window.height / 3) / MainApp.сomplexity
-        for i in range(num_web):
+        for i in range(20):
+            distance_between_web = randint((Window.height / 3) / MainApp.сomplexity, (Window.height / 2.5) / MainApp.сomplexity)
             web = SpiderWeb()
             web.web_position = randint(50, self.root.height - 100)
             web.size_hint = (None, None)
-            web.pos = (Window.width + i*distance_between_web, web.web_position)
+            web.pos = (Window.width + i * distance_between_web, web.web_position)
             web.size = (Window.height / 5, Window.height / 5)
 
             self.cobwebs.append(web)
             self.root.add_widget(web)
 
         # Создать биты
-        num_bit = 200
-        distance_between_bit = (Window.height * 5) / MainApp.сomplexity
-        for i in range(num_bit):
+        for i in range(20):
+            distance_between_bit = randint((Window.height * 4) / MainApp.сomplexity, (Window.height * 6) / MainApp.сomplexity)
             bit = Bit()
             bit.bit_position = randint(50, self.root.height - 100)
             bit.size_hint = (None, None)
-            bit.pos = (250 + Window.width + i*distance_between_bit, bit.bit_position)
+            bit.pos = (250 + Window.width + i * distance_between_bit, bit.bit_position)
             bit.size = (Window.height / 5, Window.height / 5)
 
             self.bits.append(bit)
             self.root.add_widget(bit)
 
         # Создать кровушку
-        num_blood = 100
-        distance_between_blood = (Window.height * 5) * MainApp.сomplexity
-        for i in range(num_blood):
+        for i in range(20):
+            distance_between_blood = randint((Window.height * 4) * MainApp.сomplexity, (Window.height * 6) * MainApp.сomplexity)
             blood = BloodBag()
             blood.blood_position = randint(50, self.root.height - 100)
             blood.size_hint = (None, None)
@@ -249,9 +244,8 @@ class MainApp(App):
             self.root.add_widget(blood)
 
         # Создать энергосик
-        num_drink = 100
-        distance_between_drink = (Window.height * 3) * MainApp.сomplexity
-        for i in range(num_drink):
+        for i in range(20):
+            distance_between_drink = randint((Window.height * 2) * MainApp.сomplexity, (Window.height * 3) * MainApp.сomplexity)
             drink = EnergyDrink()
             drink.drink_position = randint(50, self.root.height - 100)
             drink.size_hint = (None, None)
@@ -261,26 +255,35 @@ class MainApp(App):
             self.drinks.append(drink)
             self.root.add_widget(drink)
 
-    # Двигаем паутинку
+    # Двигаем и генерируем новую павутинку
     def move_cobwebs(self, time_passed):
         for web in self.cobwebs:
-            web.x -= time_passed * 600 * self.сomplexity
+            web.x -= time_passed * 900 * self.сomplexity
+            if (web.pos[0] < - Window.width):
+                self.root.remove_widget(web)
+                self.cobwebs.remove(web)
 
-        # Зацикливание паутинки
-        distance_between_web = Window.height
+        distance_between_web = randint((Window.height / 3) / MainApp.сomplexity, (Window.height / 2.5) / MainApp.сomplexity)
         web_xs = list(map(lambda web: web.x, self.cobwebs))
         right_most_x = max(web_xs)
         if right_most_x <= Window.width - distance_between_web:
-            most_left_web = self.cobwebs[web_xs.index(min(web_xs))]
-            most_left_web.x = Window.width
+            for i in range(10):
+                web = SpiderWeb()
+                web.web_position = randint(50, self.root.height - 100)
+                web.size_hint = (None, None)
+                web.pos = (Window.width + i * distance_between_web, web.web_position)
+                web.size = (Window.height / 5, Window.height / 5)
+
+                self.cobwebs.append(web)
+                self.root.add_widget(web)
 
     # Двигаем биты
     def move_bits(self, time_passed):
         for bit in self.bits:
-            bit.x -= time_passed * 900 * self.сomplexity
+            bit.x -= time_passed * 1400 * self.сomplexity
 
         # Зацикливание биты
-        distance_between_bit = Window.height
+        distance_between_bit = (Window.height * 5) / MainApp.сomplexity
         bit_xs = list(map(lambda bit: bit.x, self.bits))
         right_most_x = max(bit_xs)
         if right_most_x <= Window.width - distance_between_bit:
@@ -290,10 +293,10 @@ class MainApp(App):
     # Двигаем кровушку
     def move_blood_bags(self, time_passed):
         for blood in self.blood_bags:
-            blood.x -= time_passed * 800 * self.сomplexity
+            blood.x -= time_passed * 1200 * self.сomplexity
 
         # Зацикливание кровушку
-        distance_between_blood = Window.height / 5
+        distance_between_blood = (Window.height * 5) * MainApp.сomplexity
         blood_xs = list(map(lambda blood: blood.x, self.blood_bags))
         right_most_x = max(blood_xs)
         if right_most_x <= Window.width - distance_between_blood:
@@ -303,10 +306,10 @@ class MainApp(App):
     # Двигаем энергосик
     def move_driks(self, time_passed):
         for drink in self.drinks:
-            drink.x -= time_passed * 800 * self.сomplexity
+            drink.x -= time_passed * 1200 * self.сomplexity
 
         # Зацикливание энергосика
-        distance_between_blood = Window.height / 5
+        distance_between_blood = (Window.height * 3) * MainApp.сomplexity
         blood_xs = list(map(lambda blood: blood.x, self.blood_bags))
         right_most_x = max(blood_xs)
         if right_most_x <= Window.width - distance_between_blood:
