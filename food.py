@@ -18,3 +18,18 @@ class BloodBag(Widget):
         # Создаем текстуру кровушки
         self.blood_texture = Image(source="bloodBag.png").texture
         self.blood_texture.wrap = 'repeat'
+
+# Банка энергоса
+class EnergyDrink(Widget):
+    # Центр банки
+    drink_position = NumericProperty(0)
+    drink_texture = ObjectProperty(None)
+    drink_width = Window.height / 8
+    drink_height = Window.height / 8
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Создаем баночки энергоса
+        self.drink_texture = Image(source="energy_drink.png").texture
+        self.drink_texture.wrap = 'repeat'

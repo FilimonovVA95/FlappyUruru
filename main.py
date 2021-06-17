@@ -6,8 +6,8 @@ from kivy.uix.image import Image
 from kivy.core.window import Window
 from kivy.clock import Clock
 
-from bloodBag import BloodBag
-from spiderWeb import SpiderWeb
+from food import BloodBag, EnergyDrink
+from traps import SpiderWeb, Bit
 
 
 # Задний фон
@@ -65,8 +65,11 @@ class MainApp(App):
     max_energy = int(200 / сomplexity)
     # Для корректного списывания баллов при падении
     is_down = False
+    # Массивы с обьектами (ловушки и еда)
     cobwebs = []
     blood_bags = []
+    bits = []
+    drinks = []
     GRAVITY = (Window.height / 1.5) * сomplexity
     time = 0
 
@@ -79,7 +82,9 @@ class MainApp(App):
         ururu.y = ururu.y + ururu.velocity * time_passed
         ururu.velocity = ururu.velocity - self.GRAVITY * time_passed
         self.check_collision_web()
+        self.check_collision_bit()
         self.check_collision_blood()
+        self.check_collision_drink()
 
     # Проверяем на столкновение с паутиной
     def check_collision_web(self):
@@ -89,28 +94,41 @@ class MainApp(App):
             if (web.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (web.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
                 if abs(web.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy -= 10 * MainApp.сomplexity
+                    MainApp.energy -= int(10 * MainApp.сomplexity)
                     ururu.source = "ururu3.png"
                     self.root.remove_widget(web)
                     self.cobwebs.remove(web)
         if ururu.y < 100 and not self.is_down:
             ururu.velocity = - ururu.velocity
-            MainApp.energy -= 10 * MainApp.сomplexity
+            MainApp.energy -= int(10 * MainApp.сomplexity)
             ururu.source = "ururu3.png"
             self.is_down = True
 
         if ururu.top > Window.height:
-            MainApp.energy -= 10 * MainApp.сomplexity
+            MainApp.energy -= int(10 * MainApp.сomplexity)
             ururu.velocity -= (Window.height / 3) * MainApp.сomplexity
             ururu.source = "ururu3.png"
+
+    # Проверяем на столкновение с битой
+    def check_collision_bit(self):
+        ururu = self.root.ids.ururu
+        for bit in self.bits:
+            # Проверяем что позиция биты по горизонту 20 +/- "толщина" биты и "тольщина" Ури
+            if (bit.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (bit.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
+                # Проверяем что разница центров Ури и биты меньше сумарного их половинного размера
+                if abs(bit.pos[1] - ururu.pos[1]) < Window.height / 7:
+                    MainApp.energy -= int(30 * MainApp.сomplexity)
+                    ururu.source = "ururu3.png"
+                    self.root.remove_widget(bit)
+                    self.bits.remove(bit)
 
     # Проверяем на столкновение с кровушкой
     def check_collision_blood(self):
         ururu = self.root.ids.ururu
         for blood in self.blood_bags:
-            # Проверяем что позиция сетки по горизонту 20 +/- "толщина" сетки "тольщина" Ури
+            # Проверяем что позиция сетки по горизонту 20 +/- "толщина" кровушки и "тольщина" Ури
             if (blood.pos[0] < 20 + (Window.height / 32) + (Window.height / 20 * 0.6)) and (blood.pos[0] > 20 - (Window.height / 32) - (Window.height / 20 * 0.6)):
-                # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
+                # Проверяем что разница центров Ури и кровушки меньше сумарного их половинного размера
                 if abs(blood.pos[1] - ururu.pos[1]) < Window.height / 7:
                     MainApp.energy += int(30 / MainApp.сomplexity)
                     if MainApp.energy >= MainApp.max_energy:
@@ -118,6 +136,21 @@ class MainApp(App):
                     ururu.source = "ururu3.png"
                     self.root.remove_widget(blood)
                     self.blood_bags.remove(blood)
+
+    # Проверяем на столкновение с энергосиком
+    def check_collision_drink(self):
+        ururu = self.root.ids.ururu
+        for drink in self.drinks:
+            # Проверяем что позиция сетки по горизонту 20 +/- "толщина" банки и "тольщина" Ури
+            if (drink.pos[0] < 20 + (Window.height / 32) + (Window.height / 20 * 0.6)) and (drink.pos[0] > 20 - (Window.height / 32) - (Window.height / 20 * 0.6)):
+                # Проверяем что разница центров Ури и энергосика меньше сумарного их половинного размера
+                if abs(drink.pos[1] - ururu.pos[1]) < Window.height / 7:
+                    MainApp.energy += int(20 / MainApp.сomplexity)
+                    if MainApp.energy >= MainApp.max_energy:
+                        MainApp.energy = int(200)
+                    ururu.source = "ururu3.png"
+                    self.root.remove_widget(drink)
+                    self.drinks.remove(drink)
 
     # Проверяем на конец игры
     def check_game_over(self, time_passed):
@@ -136,11 +169,15 @@ class MainApp(App):
     def game_over(self):
         self.root.ids.ururu.source = "ururu3.png"
         self.root.ids.ururu.pos = (20, self.root.height / 2.0)
-        # Удаляем паутину и кровушку
+        # Удаляем ловушки и еду
         for web in self.cobwebs:
             self.root.remove_widget(web)
+        for bit in self.bits:
+            self.root.remove_widget(bit)
         for blood in self.blood_bags:
             self.root.remove_widget(blood)
+        for drink in self.drinks:
+            self.root.remove_widget(drink)
         self.frames.cancel()
         # Делаем снова активными кнопки
         self.root.ids.start_game_button.disabled = False
@@ -152,7 +189,9 @@ class MainApp(App):
     def next_frame(self, time_passed):
         self.move_ururu(time_passed)
         self.move_cobwebs(time_passed)
+        self.move_bits(time_passed)
         self.move_blood_bags(time_passed)
+        self.move_driks(time_passed)
         self.root.ids.background.scroll_textures(time_passed)
         self.add_scrole(time_passed)
         self.check_game_over(time_passed)
@@ -183,18 +222,44 @@ class MainApp(App):
             self.cobwebs.append(web)
             self.root.add_widget(web)
 
+        # Создать биты
+        num_bit = 200
+        distance_between_bit = (Window.height * 5) / MainApp.сomplexity
+        for i in range(num_bit):
+            bit = Bit()
+            bit.bit_position = randint(50, self.root.height - 100)
+            bit.size_hint = (None, None)
+            bit.pos = (250 + Window.width + i*distance_between_bit, bit.bit_position)
+            bit.size = (Window.height / 5, Window.height / 5)
+
+            self.bits.append(bit)
+            self.root.add_widget(bit)
+
         # Создать кровушку
         num_blood = 100
-        distance_between_blood = (Window.height * 3) * MainApp.сomplexity
+        distance_between_blood = (Window.height * 5) * MainApp.сomplexity
         for i in range(num_blood):
             blood = BloodBag()
             blood.blood_position = randint(50, self.root.height - 100)
             blood.size_hint = (None, None)
-            blood.pos = (Window.width + i*distance_between_blood, blood.blood_position)
+            blood.pos = (700 + Window.width + i*distance_between_blood, blood.blood_position)
             blood.size = (Window.height / 5, Window.height / 5)
 
             self.blood_bags.append(blood)
             self.root.add_widget(blood)
+
+        # Создать энергосик
+        num_drink = 100
+        distance_between_drink = (Window.height * 3) * MainApp.сomplexity
+        for i in range(num_drink):
+            drink = EnergyDrink()
+            drink.drink_position = randint(50, self.root.height - 100)
+            drink.size_hint = (None, None)
+            drink.pos = (500 + Window.width + i*distance_between_drink, drink.drink_position)
+            drink.size = (Window.height / 5, Window.height / 5)
+
+            self.drinks.append(drink)
+            self.root.add_widget(drink)
 
     # Двигаем паутинку
     def move_cobwebs(self, time_passed):
@@ -209,6 +274,19 @@ class MainApp(App):
             most_left_web = self.cobwebs[web_xs.index(min(web_xs))]
             most_left_web.x = Window.width
 
+    # Двигаем биты
+    def move_bits(self, time_passed):
+        for bit in self.bits:
+            bit.x -= time_passed * 900 * self.сomplexity
+
+        # Зацикливание биты
+        distance_between_bit = Window.height
+        bit_xs = list(map(lambda bit: bit.x, self.bits))
+        right_most_x = max(bit_xs)
+        if right_most_x <= Window.width - distance_between_bit:
+            most_left_bit = self.bits[bit_xs.index(min(bit_xs))]
+            most_left_bit.x = Window.width
+
     # Двигаем кровушку
     def move_blood_bags(self, time_passed):
         for blood in self.blood_bags:
@@ -217,10 +295,23 @@ class MainApp(App):
         # Зацикливание кровушку
         distance_between_blood = Window.height / 5
         blood_xs = list(map(lambda blood: blood.x, self.blood_bags))
-        right_most_x2 = max(blood_xs)
-        if right_most_x2 <= Window.width - distance_between_blood:
-            most_left_blood2 = self.blood_bags[blood_xs.index(min(blood_xs))]
-            most_left_blood2.x = Window.width
+        right_most_x = max(blood_xs)
+        if right_most_x <= Window.width - distance_between_blood:
+            most_left_blood = self.blood_bags[blood_xs.index(min(blood_xs))]
+            most_left_blood.x = Window.width
+
+    # Двигаем энергосик
+    def move_driks(self, time_passed):
+        for drink in self.drinks:
+            drink.x -= time_passed * 800 * self.сomplexity
+
+        # Зацикливание энергосика
+        distance_between_blood = Window.height / 5
+        blood_xs = list(map(lambda blood: blood.x, self.blood_bags))
+        right_most_x = max(blood_xs)
+        if right_most_x <= Window.width - distance_between_blood:
+            most_left_blood = self.blood_bags[blood_xs.index(min(blood_xs))]
+            most_left_blood.x = Window.width
 
 if __name__ == "__main__":
     MainApp().run()
