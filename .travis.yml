@@ -29,5 +29,5 @@ install:
   - ls bin/ -l
   - echo "TODO"
   - gem install dpl --pre
-  - dpl releases --token $APK_TOKEN --file "bin/flappyUruru-0.4.5-armeabi-v7a-debug.apk" --tag_name "v.0.4.5"
+  - dpl releases --token $APK_TOKEN --file "bin/flappyUruru-0.4.6-armeabi-v7a-debug.apk" --tag_name "v.0.4.6"
   - echo "TODO 2"
