@@ -3,6 +3,7 @@ import os
 from random import randint
 from kivy.app import App
 from kivy.config import ConfigParser
+from kivy.core.audio import SoundLoader
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.uix.image import Image
@@ -94,6 +95,11 @@ class MainApp(App):
     timer_is_down = 0
     timer_stop = 0
     timer_increasing = 0
+    # Музыка
+    sound_volume = 1
+    sound = SoundLoader.load('music.mp3')
+    sound.volume = 0.1 * sound_volume
+    sound.play()
 
     # Инициализация записи
     def __init__(self, **kvargs):
@@ -108,6 +114,8 @@ class MainApp(App):
         config.setdefault('General', 'increasing_speed', "1")
         config.setdefault('General', 'increasing_complexity', "1")
         config.setdefault('General', 'max_score', "0")
+        config.setdefault('General', 'is_music', "True")
+        config.setdefault('General', 'sound_volume', "1")
 
     def set_value_from_config(self):
         self.config.read(os.path.join(self.directory, '%(appname)s.ini'))
@@ -116,6 +124,8 @@ class MainApp(App):
         self.user_data = ast.literal_eval(self.config.get('General', 'increasing_speed'))
         self.user_data = ast.literal_eval(self.config.get('General', 'increasing_complexity'))
         self.user_data = ast.literal_eval(self.config.get('General', 'max_score'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'is_music'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'sound_volume'))
 
     def get_application_config(self):
         return super(MainApp, self).get_application_config('{}/%(appname)s.ini'.format(self.directory))
@@ -125,8 +135,8 @@ class MainApp(App):
         Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
         Clock.schedule_interval(self.timer_go, 1/60.)
 
-        self.app = App.get_running_app()
         # Считывание данных при запуске
+        self.app = App.get_running_app()
         MainApp.speed = int(self.app.config.get('General', 'speed'))
         MainApp.complexity = int(self.app.config.get('General', 'complexity'))
         MainApp.increasing_speed = int(self.app.config.get('General', 'increasing_speed'))
@@ -222,6 +232,19 @@ class MainApp(App):
                     self.root.remove_widget(drink)
                     self.drinks.remove(drink)
 
+    # Циклим музыку и обновляем картинку
+    def music_update(self, time_passed):
+        if self.config.get('General', 'is_music') == "True" and self.sound.state == 'stop':
+            self.sound.play()
+            self.root.ids.music.background_normal = "Images/music_on.png"
+            self.root.ids.music.background_down = "Images/music_on.png"
+            print("play")
+        if self.config.get('General', 'is_music') == "False" and self.sound.state == 'play':
+            self.sound.stop()
+            self.root.ids.music.background_normal = "Images/music_off.png"
+            self.root.ids.music.background_down = "Images/music_off.png"
+            print("stop")
+
     # Проверяем на конец игры
     def check_game_over(self, time_passed):
         if MainApp.energy <= 0:
@@ -313,6 +336,7 @@ class MainApp(App):
         self.is_down_update(time_passed)
         self.is_stop(time_passed)
         self.increasing_update(time_passed)
+        self.music_update(time_passed)
 
     def start_game(self):
         # Считывание данных
@@ -321,6 +345,7 @@ class MainApp(App):
         MainApp.increasing_speed = self.app.config.get('General', 'increasing_speed')
         MainApp.increasing_complexity = self.app.config.get('General', 'increasing_complexity')
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
+        MainApp.is_music = self.app.config.get('General', 'is_music')
 
         # Обнуление счета и энергии
         self.root.ids.score.text = "0"
@@ -516,6 +541,29 @@ class MainApp(App):
         else:
             self.root.ids.input_increasing_complexity.text = self.config.get('General', 'increasing_complexity')
 
+    # Записываем громкость
+    def set_config_volume(self, volume):
+        if volume.isdigit():
+            self.increasing_complexity = str(volume)
+            self.config.set('General', 'volume', str(volume))
+            self.sound.volume = int(volume) * 0.1
+        else:
+            self.root.ids.input_volume.text = self.config.get('General', 'volume')
+
+    # Меняем состояние музыки
+    def swap_music(self):
+        if self.config.get('General', 'is_music') == "True":
+            self.config.set('General', 'is_music', "False")
+            self.app.config.write()
+            self.root.ids.music.background_normal = "Images/music_on.png"
+            self.root.ids.music.background_down = "Images/music_on.png"
+            self.sound.play()
+        else:
+            self.config.set('General', 'is_music', "True")
+            self.app.config.write()
+            self.root.ids.music.background_normal = "Images/music_off.png"
+            self.root.ids.music.background_down = "Images/music_off.png"
+            self.sound.stop()
 
 if __name__ == "__main__":
     MainApp().run()
