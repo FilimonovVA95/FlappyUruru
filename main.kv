@@ -172,6 +172,9 @@ FloatLayout:
                 input_complexity.disabled = True
                 input_increasing_speed.disabled = True
                 input_increasing_complexity.disabled = True
+                # Откатываем изменение максимального счета если не применили
+                app.config.set('General', 'max_score', app.max_score)
+                reset_button.text = "Сброс"
         Label:
             size_hint: 0.1, 0.3
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
