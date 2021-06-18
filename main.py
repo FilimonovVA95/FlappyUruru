@@ -34,7 +34,6 @@ class Background(Widget):
 
     # Обновление облаков и города - эмитация их движения
     def scroll_textures(self, time_passed):
-        print(MainApp.speed)
         self.cloud_texture.uvpos = (self.cloud_texture.uvpos[0] - time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.cloud_texture.uvpos[1]
         self.city_texture.uvpos = (self.city_texture.uvpos[0] + time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.city_texture.uvpos[1]
 
