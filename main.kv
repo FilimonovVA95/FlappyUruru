@@ -94,7 +94,7 @@ FloatLayout:
         Label:
             size_hint: 0.3, 0.25
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: "Игра Flappy Ururu v0.6.6"
+            text: "Игра Flappy Ururu v0.6.7"
             color: (255, 255, 255)
             font_size: app.window_width / 45
         Label:
@@ -174,7 +174,7 @@ FloatLayout:
             color: (255, 255, 255)
             font_size: app.window_width / 45
         Label:
-            size_hint: 0.3, 0.1
+            size_hint: 0.3, 0.15
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: "Коэфициент скорости движения.\n Целое число, по умолчанию 1"
             multiline: True
@@ -185,7 +185,7 @@ FloatLayout:
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: str(app.config.get('General', 'speed'))
             multiline: True
-            size_hint: 0.2, 0.15
+            size_hint: 0.2, 0.12
             #height: app.window_width / 70 + 100
             font_size: app.window_width / 55
             hint_text: "Коэфициент скорости движения. Целое число, по умолчанию 1"
@@ -193,7 +193,7 @@ FloatLayout:
             background_down: "Images/transparent.png"
             disabled: True
         Label:
-            size_hint: 0.3, 0.1
+            size_hint: 0.3, 0.15
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: "Сложность, чем больше тем сложнее.\n Целое число, по умолчанию 1"
             multiline: True
@@ -204,7 +204,7 @@ FloatLayout:
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: str(app.config.get('General', 'complexity'))
             multiline: True
-            size_hint: 0.2, 0.15
+            size_hint: 0.2, 0.12
             font_size: app.window_width / 55
             hint_text: "Сложность, чем больше тем сложнее. Целое число, по умолчанию 1"
             background_normal: "Images/transparent.png"
@@ -212,7 +212,7 @@ FloatLayout:
             disabled: True
         Label:
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            size_hint: 0.2, 0.05
+            size_hint: 0.2, 0.1
             text: "Нарастание со временем \"1\" - без нарастания"
             color: (255, 255, 255)
             font_size: app.window_width / 55
@@ -279,9 +279,10 @@ FloatLayout:
                     text: "Сброс"
                     background_normal: "Images/sur_button.png"
                     background_down: "Images/sur_button.png"
+                    font_size: app.window_width / 75
                     on_release:
                         app.config.set('General', 'max_score', "0")
-                        self.text = "Нажмите \"Применить\""
+                        self.text = "Нажмите\n\"Применить\""
         Label:
             size_hint: 0.2, 0.1
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
