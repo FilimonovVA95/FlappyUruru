@@ -123,15 +123,15 @@ class MainApp(App):
     # Старт
     def on_start(self):
         Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
+        Clock.schedule_interval(self.timer_go, 1/60.)
+
         self.app = App.get_running_app()
         # Считывание данных при запуске
         MainApp.speed = int(self.app.config.get('General', 'speed'))
         MainApp.complexity = int(self.app.config.get('General', 'complexity'))
-        MainApp.increasing_speed = self.app.config.get('General', 'increasing_speed')
-        MainApp.increasing_complexity = self.app.config.get('General', 'increasing_complexity')
+        MainApp.increasing_speed = int(self.app.config.get('General', 'increasing_speed'))
+        MainApp.increasing_complexity = int(self.app.config.get('General', 'increasing_complexity'))
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
-        # Ставим правильные названия кнопок для нарастания сложности
-        MainApp.update_label_increasing(self)
 
     # Заставляем Уруру двигаться вверх-вниз
     def move_ururu(self, time_passed):
@@ -235,8 +235,8 @@ class MainApp(App):
     def increasing_update(self, time_passed):
         self.timer_increasing += 1
         if self.timer_increasing > 100:
-            MainApp.speed = MainApp.speed * float(MainApp.increasing_speed)
-            MainApp.complexity = MainApp.complexity * float(MainApp.increasing_complexity)
+            MainApp.speed = MainApp.speed * (int(MainApp.increasing_speed) / 40 + 0.975)
+            MainApp.complexity = MainApp.complexity * (int(MainApp.increasing_complexity) / 40 + 0.975)
             self.timer_increasing = 0
 
     # Обнуление проверки на замедление от удара
@@ -268,7 +268,7 @@ class MainApp(App):
             self.config.set('General', 'max_score', str(MainApp.max_score))
             self.app.config.write()
             self.root.ids.max_score.text = str("Лучший результат: " + str(self.config.get('General', 'max_score')))
-
+        # Располагаем на начальное положение
         self.root.ids.ururu.source = "Images/ururu3.png"
         self.root.ids.ururu.pos = (20, self.root.height / 2.0)
         # Удаляем ловушки и еду
@@ -293,8 +293,10 @@ class MainApp(App):
         # Сбрасываем если были оглушены
         MainApp.bonk_factor = 1
         MainApp.is_stop_marker = False
+        # Сбрасываем скорость
+        MainApp.speed = int(self.app.config.get('General', 'speed'))
 
-    # Запуск всего того, что должно постоянно работать с таймером
+    # Запуск всего того, что должно работать с таймером при игре
     def next_frame(self, time_passed):
         self.move_ururu(time_passed)
         self.move_cobwebs(time_passed)
@@ -303,6 +305,9 @@ class MainApp(App):
         self.move_driks(time_passed)
         self.root.ids.background.scroll_textures(time_passed)
         self.add_scrole(time_passed)
+
+    # Запуск всего того, что должно постоянно работать с таймером
+    def timer_go(self, time_passed):
         self.check_game_over(time_passed)
         self.energy_update(time_passed)
         self.is_down_update(time_passed)
@@ -492,40 +497,24 @@ class MainApp(App):
         if complexity.isdigit():
             self.complexity = str(complexity)
             self.config.set('General', 'complexity', str(complexity))
-            self.config.write()
         else:
             self.root.ids.input_complexity.text = self.config.get('General', 'complexity')
 
-    # Обновляем названия кнопок
-    def update_label_increasing(self):
-        # Ставим правильные названия кнопок для нарастания сложности
-        if MainApp.increasing_complexity == "1.1":
-            self.root.ids.label_increasing_complexity.text = "Нарастание сложности со временем\nВключено"
-            self.root.ids.button_text_increasing_complexity.text = "Выключить"
-        else:
-            self.root.ids.label_increasing_complexity.text = "Нарастание сложности со временем\nВыключено"
-            self.root.ids.button_text_increasing_complexity.text = "Включить"
-        # Ставим правильные названия кнопок для нарастания скорости
-        if MainApp.increasing_speed == "1.1":
-            self.root.ids.label_increasing_speed.text = "Нарастание скорости со временем\nВключено"
-            self.root.ids.button_text_increasing_speed.text = "Выключить"
-        else:
-            self.root.ids.label_increasing_speed.text = "Нарастание скорости со временем\nВыключено"
-            self.root.ids.button_text_increasing_speed.text = "Включить"
-
     # Записываем нарастание скорости
-    def update_increasing_speed_setting(self):
-        if self.config.get('General', 'increasing_speed') == "1.1":
-            self.config.set('General', 'increasing_speed', "1")
+    def set_config_increasing_speed_setting(self, increasing_speed):
+        if increasing_speed.isdigit():
+            self.increasing_speed = str(increasing_speed)
+            self.config.set('General', 'increasing_speed', str(increasing_speed))
         else:
-            self.config.set('General', 'increasing_speed', "1.1")
+            self.root.ids.input_increasing_speed.text = self.config.get('General', 'increasing_speed')
 
     # Записываем нарастание сложности
-    def update_increasing_complexity_setting(self):
-        if self.config.get('General', 'increasing_complexity') == "1.1":
-            self.config.set('General', 'increasing_complexity', "1")
+    def set_config_increasing_complexity_setting(self, increasing_complexity):
+        if increasing_complexity.isdigit():
+            self.increasing_speed = str(increasing_complexity)
+            self.config.set('General', 'increasing_speed', str(increasing_complexity))
         else:
-            self.config.set('General', 'increasing_complexity', "1.1")
+            self.root.ids.input_increasing_complexity.text = self.config.get('General', 'increasing_complexity')
 
 
 if __name__ == "__main__":

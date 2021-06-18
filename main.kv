@@ -94,7 +94,7 @@ FloatLayout:
         Label:
             size_hint: 0.3, 0.25
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: "Игра Flappy Ururu v0.6.4"
+            text: "Игра Flappy Ururu v0.6.5"
             color: (255, 255, 255)
             font_size: app.window_width / 45
         Label:
@@ -136,6 +136,8 @@ FloatLayout:
             # Делаем доступными поля ввода
             input_speed.disabled = False
             input_complexity.disabled = False
+            input_increasing_speed.disabled = False
+            input_increasing_complexity.disabled = False
     BoxLayout:
         orientation: 'vertical'
         id: setting
@@ -144,7 +146,7 @@ FloatLayout:
         Button:
             text: "Назад"
             font_size: app.window_height / 14
-            size_hint: 0.3, 0.4
+            size_hint: 0.3, 0.2
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             background_normal: "Images/button_frame.png"
             background_down: "Images/button_frame.png"
@@ -163,6 +165,8 @@ FloatLayout:
                 # Делаем недоступными поля ввода
                 input_speed.disabled = True
                 input_complexity.disabled = True
+                input_increasing_speed.disabled = True
+                input_increasing_complexity.disabled = True
         Label:
             size_hint: 0.1, 0.3
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -201,12 +205,17 @@ FloatLayout:
             text: str(app.config.get('General', 'complexity'))
             multiline: True
             size_hint: 0.2, 0.1
-            #height: app.window_width / 70 + 100
             font_size: app.window_width / 55
             hint_text: "Сложность, чем больше тем сложнее. Целое число, по умолчанию 1"
             background_normal: "Images/transparent.png"
             background_down: "Images/transparent.png"
             disabled: True
+        Label:
+            pos_hint: {'center_x': 0.4, 'center_y': 0.5}
+            size_hint: 0.2, 0.05
+            text: "Нарастание со временем \"1\" - без нарастания"
+            color: (255, 255, 255)
+            font_size: app.window_width / 55
         BoxLayout:
             size_hint: 0.3, 0.3
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -216,42 +225,41 @@ FloatLayout:
                 Label:
                     id: label_increasing_speed
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-                    text: ""
+                    text: "Скорости"
                     color: (255, 255, 255)
                     font_size: app.window_width / 55
-                Button:
-                    id: button_text_increasing_speed
+                TextInput:
+                    id: input_increasing_speed
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    text: str(app.config.get('General', 'increasing_speed'))
+                    multiline: True
                     size_hint: 0.6, 0.9
-                    text: ""
-                    background_normal: "Images/sur_button.png"
-                    background_down: "Images/sur_button.png"
-                    on_release:
-                        app.update_increasing_speed_setting()
-                        self.text = "Нажмите \"Применить\""
-            Label:
-                size_hint: 0.2, 0.1
-                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-                text: ""
+                    font_size: app.window_width / 55
+                    hint_text: "Целое число, по умолчанию 1"
+                    background_normal: "Images/transparent.png"
+                    background_down: "Images/transparent.png"
+                    disabled: True
             BoxLayout:
                 orientation: 'vertical'
                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
                 Label:
                     id: label_increasing_complexity
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-                    text: ""
+                    text: "Сложности"
                     color: (255, 255, 255)
                     font_size: app.window_width / 55
-                Button:
-                    id: button_text_increasing_complexity
+                TextInput:
+                    id: input_increasing_complexity
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    text: str(app.config.get('General', 'increasing_complexity'))
+                    multiline: True
                     size_hint: 0.6, 0.9
-                    text: ""
-                    background_normal: "Images/sur_button.png"
-                    background_down: "Images/sur_button.png"
-                    on_release:
-                        app.update_increasing_complexity_setting()
-                        self.text = "Нажмите \"Применить\""
+                    font_size: app.window_width / 55
+                    hint_text: "Целое число, по умолчанию 1"
+                    background_normal: "Images/transparent.png"
+                    background_down: "Images/transparent.png"
+                    disabled: True
             Label:
                 size_hint: 0.2, 0.1
                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -274,10 +282,14 @@ FloatLayout:
                     on_release:
                         app.config.set('General', 'max_score', "0")
                         self.text = "Нажмите \"Применить\""
+        Label:
+            size_hint: 0.2, 0.1
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: ""
         Button:
             text: "Применить"
             font_size: app.window_height / 14
-            size_hint: 0.3, 0.4
+            size_hint: 0.3, 0.2
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             background_normal: "Images/button_frame.png"
             background_down: "Images/button_frame.png"
@@ -285,6 +297,8 @@ FloatLayout:
                 # Записываем настройки
                 app.set_config_speed(input_speed.text)
                 app.set_config_complexity(input_complexity.text)
+                app.set_config_increasing_speed_setting(input_increasing_speed.text)
+                app.set_config_increasing_complexity_setting(label_increasing_complexity.text)
                 app.config.write()
                 # Переписываем лучший результат и возвращаем кнопку если сбросили счет
                 max_score.text = "Лучший результат: " + str(app.config.get('General', 'max_score'))
