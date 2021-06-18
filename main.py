@@ -511,8 +511,8 @@ class MainApp(App):
     # Записываем нарастание сложности
     def set_config_increasing_complexity_setting(self, increasing_complexity):
         if increasing_complexity.isdigit():
-            self.increasing_speed = str(increasing_complexity)
-            self.config.set('General', 'increasing_speed', str(increasing_complexity))
+            self.increasing_complexity = str(increasing_complexity)
+            self.config.set('General', 'increasing_complexity', str(increasing_complexity))
         else:
             self.root.ids.input_increasing_complexity.text = self.config.get('General', 'increasing_complexity')
 

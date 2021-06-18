@@ -298,7 +298,7 @@ FloatLayout:
                 app.set_config_speed(input_speed.text)
                 app.set_config_complexity(input_complexity.text)
                 app.set_config_increasing_speed_setting(input_increasing_speed.text)
-                app.set_config_increasing_complexity_setting(label_increasing_complexity.text)
+                app.set_config_increasing_complexity_setting(input_increasing_complexity.text)
                 app.config.write()
                 # Переписываем лучший результат и возвращаем кнопку если сбросили счет
                 max_score.text = "Лучший результат: " + str(app.config.get('General', 'max_score'))
