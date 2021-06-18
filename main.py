@@ -34,8 +34,8 @@ class Background(Widget):
 
     # Обновление облаков и города - эмитация их движения
     def scroll_textures(self, time_passed):
-        self.cloud_texture.uvpos = ((self.cloud_texture.uvpos[0] - time_passed * (0.9 + 0.11 * MainApp.сomplexity)) % Window.width, self.cloud_texture.uvpos[1])
-        self.city_texture.uvpos = ((self.city_texture.uvpos[0] + time_passed * MainApp.сomplexity) % Window.width, self.city_texture.uvpos[1])
+        self.cloud_texture.uvpos = ((self.cloud_texture.uvpos[0] - time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.cloud_texture.uvpos[1])
+        self.city_texture.uvpos = ((self.city_texture.uvpos[0] + time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.city_texture.uvpos[1])
 
         texture = self.property('cloud_texture')
         texture.dispatch(self)
@@ -50,7 +50,7 @@ class Ururu(Image):
     def on_touch_down(self, touch):
         if not MainApp.is_stop_marker:
             self.source = "Images/ururu2.png"
-            self.velocity = (Window.height / 3) * (0.9 + 0.11 * MainApp.сomplexity)
+            self.velocity = (Window.height / 3) * (0.9 + 0.11 * MainApp.speed)
             MainApp.energy -= 1
             super().on_touch_down(touch)
         else:
@@ -68,30 +68,30 @@ class MainApp(App):
     # Для реализации замедления про ударе битой
     bonk_factor = 1
     is_stop_marker = False
+    # Для корректного списывания баллов при падении
+    is_down = False
     # Размеры экрана
     window_width = Window.width
     window_height = Window.height
-    # Сложность и энергия
-    сomplexity = 1 # 1 - 10
+    # Энергия
     energy = int(100)
     max_energy = int(200)
-    # Для корректного списывания баллов при падении
-    is_down = False
+    # Настройки
+    complexity = None
+    speed = 1
+    is_increasing_complexity = None
+    max_score = None
     # Массивы с обьектами (ловушки и еда)
     cobwebs = []
     blood_bags = []
     bits = []
     drinks = []
     # Гравитация
-    GRAVITY = (Window.height / 1.5) * (0.9 + 0.11 * сomplexity)
-    # таймеры для отсчета состояний
+    GRAVITY = (Window.height / 1.5) * (0.9 + 0.11 * speed)
+    # Таймеры для отсчета состояний
     timer_score = 0
     timer_is_down = 0
     timer_stop = 0
-    # Настройки
-    speed = None
-    is_increasing_complexity = None
-    max_score = None
 
     # Инициализация записи
     def __init__(self, **kvargs):
@@ -102,12 +102,14 @@ class MainApp(App):
     def build_config(self, config):
         config.adddefaultsection('General')
         config.setdefault('General', 'speed', "1")
+        config.setdefault('General', 'complexity', "1")
         config.setdefault('General', 'is_increasing_complexity', False)
         config.setdefault('General', 'max_score', "0")
 
     def set_value_from_config(self):
         self.config.read(os.path.join(self.directory, '%(appname)s.ini'))
         self.user_data = ast.literal_eval(self.config.get('General', 'speed'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'complexity'))
         self.user_data = ast.literal_eval(self.config.get('General', 'is_increasing_complexity'))
         self.user_data = ast.literal_eval(self.config.get('General', 'max_score'))
 
@@ -119,7 +121,8 @@ class MainApp(App):
         Clock.schedule_interval(self.root.ids.background.scroll_textures, 1/60.)
         self.app = App.get_running_app()
         # Считывание данных при запуске
-        MainApp.speed = self.app.config.get('General', 'speed')
+        MainApp.speed = int(self.app.config.get('General', 'speed'))
+        MainApp.complexity = int(self.app.config.get('General', 'complexity'))
         MainApp.is_increasing_complexity = self.app.config.get('General', 'is_increasing_complexity')
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
 
@@ -140,14 +143,14 @@ class MainApp(App):
         if ururu.y < 100:
             ururu.velocity = - ururu.velocity
             if not self.is_down:
-                MainApp.energy -= int(10 * (0.9 + 0.11 * MainApp.сomplexity))
+                MainApp.energy -= int(10 * (0.9 + 0.11 * MainApp.complexity))
             ururu.source = "Images/ururu_bonk.png"
             self.is_down = False
             self.timer_is_down = 0
 
         if ururu.top > Window.height:
-            MainApp.energy -= int(10 * MainApp.сomplexity)
-            ururu.velocity -= (Window.height / 3) * (0.9 + 0.11 * MainApp.сomplexity)
+            MainApp.energy -= int(10 * MainApp.complexity)
+            ururu.velocity -= (Window.height / 3) * (0.9 + 0.11 * MainApp.speed)
             ururu.source = "Images/ururu_bonk.png"
 
     # Проверяем на столкновение с паутиной
@@ -158,7 +161,7 @@ class MainApp(App):
             if (web.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (web.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
                 if abs(web.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy -= int(10 * (0.9 + 0.11 * MainApp.сomplexity))
+                    MainApp.energy -= int(10 * (0.9 + 0.11 * MainApp.complexity))
                     if ururu.source != "Images/ururu_bonk.png":
                         ururu.source = "Images/ururu_web.png"
                     self.root.remove_widget(web)
@@ -172,7 +175,7 @@ class MainApp(App):
             if (bit.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (bit.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и биты меньше сумарного их половинного размера
                 if abs(bit.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy -= int(30 * (0.9 + 0.11 * MainApp.сomplexity))
+                    MainApp.energy -= int(30 * (0.9 + 0.11 * MainApp.complexity))
                     ururu.source = "Images/ururu_bonk.png"
                     self.root.remove_widget(bit)
                     self.bits.remove(bit)
@@ -188,7 +191,7 @@ class MainApp(App):
             if (blood.pos[0] < 20 + (Window.height / 32) + (Window.height / 20 * 0.6)) and (blood.pos[0] > 20 - (Window.height / 32) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и кровушки меньше сумарного их половинного размера
                 if abs(blood.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy += int(30 / (0.9 + 0.11 * MainApp.сomplexity))
+                    MainApp.energy += int(30 / (0.9 + 0.11 * MainApp.complexity))
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
                     if ururu.source != "Images/ururu_bonk.png":
@@ -204,7 +207,7 @@ class MainApp(App):
             if (drink.pos[0] < 20 + (Window.height / 32) + (Window.height / 20 * 0.6)) and (drink.pos[0] > 20 - (Window.height / 32) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и энергосика меньше сумарного их половинного размера
                 if abs(drink.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy += int(20 / (0.9 + 0.11 * MainApp.сomplexity))
+                    MainApp.energy += int(20 / (0.9 + 0.11 * MainApp.complexity))
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
                     if ururu.source != "Images/ururu_bonk.png":
@@ -268,6 +271,9 @@ class MainApp(App):
         self.root.ids.start_game_button.opacity = 1
         self.root.ids.about_game_button.disabled = False
         self.root.ids.about_game_button.opacity = 1
+        self.root.ids.setting_button.disabled = False
+        self.root.ids.setting_button.opacity = 1
+        # Сбрасываем энергию
         self.root.ids.energy.opacity = 0
         # Сбрасываем если были оглушены
         MainApp.bonk_factor = 1
@@ -289,7 +295,8 @@ class MainApp(App):
 
     def start_game(self):
         # Считывание данных
-        MainApp.speed = self.app.config.get('General', 'speed')
+        MainApp.speed = int(self.app.config.get('General', 'speed'))
+        MainApp.complexity = int(self.app.config.get('General', 'complexity'))
         MainApp.is_increasing_complexity = self.app.config.get('General', 'is_increasing_complexity')
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
 
@@ -305,10 +312,6 @@ class MainApp(App):
         self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
         # Таймер
         self.frames = Clock.schedule_interval(self.next_frame, 1/60.)
-
-        # Скрываем кнопку "об игре"
-        self.root.ids.about_game_button.disabled = True
-        self.root.ids.about_game_button.opacity = 0
 
         # Создать паутину
         for i in range(30):
@@ -362,7 +365,7 @@ class MainApp(App):
     def move_cobwebs(self, time_passed):
         # Двигаем паутину
         for web in self.cobwebs:
-            web.x -= time_passed * 900 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
+            web.x -= time_passed * 900 * (0.9 + 0.11 * MainApp.speed) / MainApp.bonk_factor
             # Если паутина ушла за границу - удаляем ее
             if (web.pos[0] < - Window.width):
                 self.root.remove_widget(web)
@@ -387,7 +390,7 @@ class MainApp(App):
     def move_bits(self, time_passed):
         # Двигаем биты
         for bit in self.bits:
-            bit.x -= time_passed * 900 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
+            bit.x -= time_passed * 900 * (0.9 + 0.11 * MainApp.speed) / MainApp.bonk_factor
             # Если бита ушла за границу - удаляем ее
             if (bit.pos[0] < - Window.width):
                 self.root.remove_widget(bit)
@@ -412,7 +415,7 @@ class MainApp(App):
     def move_blood_bags(self, time_passed):
         # Двигаем кровушку
         for blood in self.blood_bags:
-            blood.x -= time_passed * 1200 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
+            blood.x -= time_passed * 1200 * (0.9 + 0.11 * MainApp.speed) / MainApp.bonk_factor
             # Если кровушка ушла за границу - удаляем ее
             if (blood.pos[0] < - Window.width):
                 self.root.remove_widget(blood)
@@ -437,7 +440,7 @@ class MainApp(App):
     def move_driks(self, time_passed):
         # Двигаем энергосики
         for drink in self.drinks:
-            drink.x -= time_passed * 1200 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
+            drink.x -= time_passed * 1200 * (0.9 + 0.11 * MainApp.speed) / MainApp.bonk_factor
             # Если энергосик ушел за границу - удаляем его
             if (drink.pos[0] < - Window.width):
                 self.root.remove_widget(drink)

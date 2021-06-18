@@ -27,10 +27,8 @@ FloatLayout:
         id: max_score
         size_hint_y: None
         size_hint_x: None
-        #height: app.window_height / 5
-        #width: app.window_width
         height: app.window_height / 5
-        width: app.window_width * 1.4
+        width: app.window_width * 1.5
         text: "Лучший результат: " + str(app.config.get('General', 'max_score'))
         font_size: app.window_height / 14
     Button:
@@ -47,6 +45,11 @@ FloatLayout:
             self.opacity = 0
             app.start_game()
             energy.opacity = 1
+            # Скрываем кнопки "Об игре" и "Настройки"
+            setting_button.disabled = True
+            setting_button.opacity = 0
+            about_game_button.disabled = True
+            about_game_button.opacity = 0
     Button:
         size_hint: None, None
         size: app.window_height / 7 * 2, app.window_height / 7
@@ -57,8 +60,10 @@ FloatLayout:
         id: about_game_button
         opacity: 1.0
         on_release:
-            self.disabled = False
+            self.disabled = True
             self.opacity = 0
+            setting_button.disabled = True
+            setting_button.opacity = 0
             # Делаем недоступными начало игры
             start_game_button.disabled = True
             # Показываем свиток с кнопкой назад и текст
@@ -74,33 +79,24 @@ FloatLayout:
         Button:
             text: "Назад"
             font_size: app.window_height / 14
-            size_hint: 0.3, 0.35
+            size_hint: 0.3, 0.25
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             background_normal: "Images/button_frame.png"
             background_down: "Images/button_frame.png"
             on_release:
-                # Скрываем информацию
-                about_game.opacity = 0
-                about_game_text1.opacity = 0
-                about_game_text2.opacity = 0
-                about_game_text3.opacity = 0
-                about_game.disabled = False
-                about_game_button.opacity = 1
-                # Включаем начало игры
-                start_game_button.disabled = False
+                # Реализация в кнопке "Назад" настроек
         Image:
             source: "Images/scroll.png"
             disabled: False
         Label:
-            size_hint: 0.8, 0.5
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            size_hint: 0.1, 0.25
             text: ""
             font_size: 40
     Label:
         id: about_game_text1
         size_hint_y: None
         height: root.height + app.window_height / 2
-        text: "Игра Flappy Ururu v0.5.1"
+        text: "Игра Flappy Ururu v0.6.1"
         font_size: app.window_width / 45
         color: (255, 255, 255)
         opacity: 0.0
@@ -120,6 +116,127 @@ FloatLayout:
         font_size: app.window_width / 55
         color: (255, 255, 255)
         opacity: 0.0
+
+
+    Button:
+        size_hint: None, None
+        size: app.window_height / 7 * 2, app.window_height / 7
+        pos: app.window_height / 4, app.window_height / 14
+        text: "Настройки"
+        background_normal: "Images/button_frame.png"
+        background_down: "Images/button_frame.png"
+        id: setting_button
+        opacity: 1.0
+        on_release:
+            self.disabled = True
+            self.opacity = 0
+            about_game_button.disabled = True
+            about_game_button.opacity = 0
+            # Делаем недоступными начало игры
+            start_game_button.disabled = True
+            # Показываем свиток с кнопкой назад
+            setting.opacity = 1
+            setting_scroll.opacity = 1
+            # Делаем доступными поля ввода
+            input_speed.disabled = False
+            input_complexity.disabled = False
+    Image:
+        id: setting_scroll
+        #size: app.windows_width / 2, app.windows_height / 2
+        size_hint: 0.8, 0.7
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        source: "Images/scroll.png"
+        disabled: False
+        opacity: 0.0
+    BoxLayout:
+        orientation: 'vertical'
+        id: setting
+        pos: 0, 0
+        opacity: 0.0
+        Button:
+            text: "Назад"
+            font_size: app.window_height / 14
+            size_hint: 0.3, 0.4
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            background_normal: "Images/button_frame.png"
+            background_down: "Images/button_frame.png"
+            on_release:
+                # Скрываем информация "Об игре"
+                about_game.opacity = 0
+                about_game_text1.opacity = 0
+                about_game_text2.opacity = 0
+                about_game_text3.opacity = 0
+                about_game_button.disabled = False
+                about_game_button.opacity = 1
+                # Скрываем информацию настроек
+                setting.opacity = 0
+                setting_button.opacity = 1
+                setting_button.disabled = False
+                setting_scroll.opacity = 0
+                # Включаем начало игры
+                start_game_button.disabled = False
+                # Делаем недоступными поля ввода
+                input_speed.disabled = True
+                input_complexity.disabled = True
+        Label:
+            size_hint: 0.1, 0.3
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: "Настройки"
+            color: (255, 255, 255)
+            font_size: app.window_width / 25
+        Label:
+            size_hint: 0.3, 0.1
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: "Коэфициент скорости движения обьектов, по умолчанию 1"
+            multiline: True
+            color: (255, 255, 255)
+            font_size: app.window_width / 40
+        TextInput:
+            id: input_speed
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: str(app.config.get('General', 'speed'))
+            multiline: True
+            size_hint: 0.3, 0.3
+            #height: app.window_width / 70 + 100
+            font_size: app.window_width / 40
+            hint_text: "Коэфициент скорости движения, по умолчанию 1"
+            background_normal: "Images/transparent.png"
+            background_down: "Images/transparent.png"
+            disabled: True
+        Label:
+            size_hint: 0.3, 0.1
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: "Сложность, по умолчанию 1. Чем больше тем сложнее"
+            multiline: True
+            color: (255, 255, 255)
+            font_size: app.window_width / 40
+        TextInput:
+            id: input_complexity
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: str(app.config.get('General', 'speed'))
+            multiline: True
+            size_hint: 0.3, 0.3
+            #height: app.window_width / 70 + 100
+            font_size: app.window_width / 40
+            hint_text: "Сложность, по умолчанию 1. Чем больше тем сложнее"
+            background_normal: "Images/transparent.png"
+            background_down: "Images/transparent.png"
+            disabled: True
+        Button:
+            text: "Применить"
+            font_size: app.window_height / 14
+            size_hint: 0.3, 0.4
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            background_normal: "Images/button_frame.png"
+            background_down: "Images/button_frame.png"
+            on_release:
+                app.config.set('General', 'speed', str(input_speed.text))
+                app.config.set('General', 'complexity', str(input_complexity.text))
+                app.config.write()
+
+
+
+
     Label:
         id: energy
         size_hint_y: None
