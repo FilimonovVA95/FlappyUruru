@@ -34,7 +34,7 @@ class Background(Widget):
 
     # Обновление облаков и города - эмитация их движения
     def scroll_textures(self, time_passed):
-        self.cloud_texture.uvpos = ((self.cloud_texture.uvpos[0] - time_passed * (1 + 0.1 * MainApp.сomplexity)) % Window.width, self.cloud_texture.uvpos[1])
+        self.cloud_texture.uvpos = ((self.cloud_texture.uvpos[0] - time_passed * (0.9 + 0.11 * MainApp.сomplexity)) % Window.width, self.cloud_texture.uvpos[1])
         self.city_texture.uvpos = ((self.city_texture.uvpos[0] + time_passed * MainApp.сomplexity) % Window.width, self.city_texture.uvpos[1])
 
         texture = self.property('cloud_texture')
@@ -50,7 +50,7 @@ class Ururu(Image):
     def on_touch_down(self, touch):
         if not MainApp.is_stop_marker:
             self.source = "Images/ururu2.png"
-            self.velocity = (Window.height / 3) * (1 + 0.1 * MainApp.сomplexity)
+            self.velocity = (Window.height / 3) * (0.9 + 0.11 * MainApp.сomplexity)
             MainApp.energy -= 1
             super().on_touch_down(touch)
         else:
@@ -83,7 +83,7 @@ class MainApp(App):
     bits = []
     drinks = []
     # Гравитация
-    GRAVITY = (Window.height / 1.5) * (1 + 0.1 * сomplexity)
+    GRAVITY = (Window.height / 1.5) * (0.9 + 0.11 * сomplexity)
     # таймеры для отсчета состояний
     timer_score = 0
     timer_is_down = 0
@@ -140,14 +140,14 @@ class MainApp(App):
         if ururu.y < 100:
             ururu.velocity = - ururu.velocity
             if not self.is_down:
-                MainApp.energy -= int(10 * (1 + 0.1 * MainApp.сomplexity))
+                MainApp.energy -= int(10 * (0.9 + 0.11 * MainApp.сomplexity))
             ururu.source = "Images/ururu_bonk.png"
             self.is_down = False
             self.timer_is_down = 0
 
         if ururu.top > Window.height:
             MainApp.energy -= int(10 * MainApp.сomplexity)
-            ururu.velocity -= (Window.height / 3) * (1 + 0.1 * MainApp.сomplexity)
+            ururu.velocity -= (Window.height / 3) * (0.9 + 0.11 * MainApp.сomplexity)
             ururu.source = "Images/ururu_bonk.png"
 
     # Проверяем на столкновение с паутиной
@@ -158,8 +158,9 @@ class MainApp(App):
             if (web.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (web.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и паутины меньше сумарного их половинного размера
                 if abs(web.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy -= int(10 * (1 + 0.1 * MainApp.сomplexity))
-                    ururu.source = "Images/ururu_web.png"
+                    MainApp.energy -= int(10 * (0.9 + 0.11 * MainApp.сomplexity))
+                    if ururu.source != "Images/ururu_bonk.png":
+                        ururu.source = "Images/ururu_web.png"
                     self.root.remove_widget(web)
                     self.cobwebs.remove(web)
 
@@ -171,7 +172,7 @@ class MainApp(App):
             if (bit.pos[0] < 20 + (Window.height / 20)+ (Window.height / 20 * 0.6)) and (bit.pos[0] > 20 - (Window.height / 20) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и биты меньше сумарного их половинного размера
                 if abs(bit.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy -= int(30 * (1 + 0.1 * MainApp.сomplexity))
+                    MainApp.energy -= int(30 * (0.9 + 0.11 * MainApp.сomplexity))
                     ururu.source = "Images/ururu_bonk.png"
                     self.root.remove_widget(bit)
                     self.bits.remove(bit)
@@ -187,10 +188,11 @@ class MainApp(App):
             if (blood.pos[0] < 20 + (Window.height / 32) + (Window.height / 20 * 0.6)) and (blood.pos[0] > 20 - (Window.height / 32) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и кровушки меньше сумарного их половинного размера
                 if abs(blood.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy += int(30 / (1 + 0.1 * MainApp.сomplexity))
+                    MainApp.energy += int(30 / (0.9 + 0.11 * MainApp.сomplexity))
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
-                    ururu.source = "Images/ururu_blood.png"
+                    if ururu.source != "Images/ururu_bonk.png":
+                        ururu.source = "Images/ururu_blood.png"
                     self.root.remove_widget(blood)
                     self.blood_bags.remove(blood)
 
@@ -202,10 +204,11 @@ class MainApp(App):
             if (drink.pos[0] < 20 + (Window.height / 32) + (Window.height / 20 * 0.6)) and (drink.pos[0] > 20 - (Window.height / 32) - (Window.height / 20 * 0.6)):
                 # Проверяем что разница центров Ури и энергосика меньше сумарного их половинного размера
                 if abs(drink.pos[1] - ururu.pos[1]) < Window.height / 7:
-                    MainApp.energy += int(20 / (1 + 0.1 * MainApp.сomplexity))
+                    MainApp.energy += int(20 / (0.9 + 0.11 * MainApp.сomplexity))
                     if MainApp.energy >= MainApp.max_energy:
                         MainApp.energy = int(200)
-                    ururu.source = "Images/ururu_drink.png"
+                    if ururu.source != "Images/ururu_bonk.png":
+                        ururu.source = "Images/ururu_drink.png"
                     self.root.remove_widget(drink)
                     self.drinks.remove(drink)
 
@@ -359,7 +362,7 @@ class MainApp(App):
     def move_cobwebs(self, time_passed):
         # Двигаем паутину
         for web in self.cobwebs:
-            web.x -= time_passed * 900 * (1 + 0.1 * MainApp.сomplexity) / MainApp.bonk_factor
+            web.x -= time_passed * 900 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
             # Если паутина ушла за границу - удаляем ее
             if (web.pos[0] < - Window.width):
                 self.root.remove_widget(web)
@@ -384,7 +387,7 @@ class MainApp(App):
     def move_bits(self, time_passed):
         # Двигаем биты
         for bit in self.bits:
-            bit.x -= time_passed * 900 * (1 + 0.1 * MainApp.сomplexity) / MainApp.bonk_factor
+            bit.x -= time_passed * 900 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
             # Если бита ушла за границу - удаляем ее
             if (bit.pos[0] < - Window.width):
                 self.root.remove_widget(bit)
@@ -409,7 +412,7 @@ class MainApp(App):
     def move_blood_bags(self, time_passed):
         # Двигаем кровушку
         for blood in self.blood_bags:
-            blood.x -= time_passed * 1200 * (1 + 0.1 * MainApp.сomplexity) / MainApp.bonk_factor
+            blood.x -= time_passed * 1200 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
             # Если кровушка ушла за границу - удаляем ее
             if (blood.pos[0] < - Window.width):
                 self.root.remove_widget(blood)
@@ -434,7 +437,7 @@ class MainApp(App):
     def move_driks(self, time_passed):
         # Двигаем энергосики
         for drink in self.drinks:
-            drink.x -= time_passed * 1200 * (1 + 0.1 * MainApp.сomplexity) / MainApp.bonk_factor
+            drink.x -= time_passed * 1200 * (0.9 + 0.11 * MainApp.сomplexity) / MainApp.bonk_factor
             # Если энергосик ушел за границу - удаляем его
             if (drink.pos[0] < - Window.width):
                 self.root.remove_widget(drink)
