@@ -34,8 +34,9 @@ class Background(Widget):
 
     # Обновление облаков и города - эмитация их движения
     def scroll_textures(self, time_passed):
-        self.cloud_texture.uvpos = ((self.cloud_texture.uvpos[0] - time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.cloud_texture.uvpos[1])
-        self.city_texture.uvpos = ((self.city_texture.uvpos[0] + time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.city_texture.uvpos[1])
+        print(MainApp.speed)
+        self.cloud_texture.uvpos = (self.cloud_texture.uvpos[0] - time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.cloud_texture.uvpos[1]
+        self.city_texture.uvpos = (self.city_texture.uvpos[0] + time_passed * (0.9 + 0.11 * MainApp.speed)) % Window.width, self.city_texture.uvpos[1]
 
         texture = self.property('cloud_texture')
         texture.dispatch(self)
@@ -79,7 +80,8 @@ class MainApp(App):
     # Настройки
     complexity = None
     speed = 1
-    is_increasing_complexity = None
+    increasing_speed = None
+    increasing_complexity = None
     max_score = None
     # Массивы с обьектами (ловушки и еда)
     cobwebs = []
@@ -92,6 +94,7 @@ class MainApp(App):
     timer_score = 0
     timer_is_down = 0
     timer_stop = 0
+    timer_increasing = 0
 
     # Инициализация записи
     def __init__(self, **kvargs):
@@ -103,14 +106,16 @@ class MainApp(App):
         config.adddefaultsection('General')
         config.setdefault('General', 'speed', "1")
         config.setdefault('General', 'complexity', "1")
-        config.setdefault('General', 'is_increasing_complexity', False)
+        config.setdefault('General', 'increasing_speed', "1")
+        config.setdefault('General', 'increasing_complexity', "1")
         config.setdefault('General', 'max_score', "0")
 
     def set_value_from_config(self):
         self.config.read(os.path.join(self.directory, '%(appname)s.ini'))
         self.user_data = ast.literal_eval(self.config.get('General', 'speed'))
         self.user_data = ast.literal_eval(self.config.get('General', 'complexity'))
-        self.user_data = ast.literal_eval(self.config.get('General', 'is_increasing_complexity'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'increasing_speed'))
+        self.user_data = ast.literal_eval(self.config.get('General', 'increasing_complexity'))
         self.user_data = ast.literal_eval(self.config.get('General', 'max_score'))
 
     def get_application_config(self):
@@ -123,8 +128,11 @@ class MainApp(App):
         # Считывание данных при запуске
         MainApp.speed = int(self.app.config.get('General', 'speed'))
         MainApp.complexity = int(self.app.config.get('General', 'complexity'))
-        MainApp.is_increasing_complexity = self.app.config.get('General', 'is_increasing_complexity')
+        MainApp.increasing_speed = self.app.config.get('General', 'increasing_speed')
+        MainApp.increasing_complexity = self.app.config.get('General', 'increasing_complexity')
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
+        # Ставим правильные названия кнопок для нарастания сложности
+        MainApp.update_label_increasing(self)
 
     # Заставляем Уруру двигаться вверх-вниз
     def move_ururu(self, time_passed):
@@ -224,6 +232,14 @@ class MainApp(App):
     def energy_update(self, time_passed):
         self.root.ids.energy.text = "Энергия: " + str(MainApp.energy) + " / " + str(MainApp.max_energy)
 
+    # Обновление усложнения игры
+    def increasing_update(self, time_passed):
+        self.timer_increasing += 1
+        if self.timer_increasing > 100:
+            MainApp.speed = MainApp.speed * float(MainApp.increasing_speed)
+            MainApp.complexity = MainApp.complexity * float(MainApp.increasing_complexity)
+            self.timer_increasing = 0
+
     # Обнуление проверки на замедление от удара
     def is_stop(self, time_passed):
         self.timer_stop += 1
@@ -245,7 +261,7 @@ class MainApp(App):
             self.root.ids.score.text = str(int(self.root.ids.score.text) + 1)
             self.timer_score = 0
 
-    # конец игры
+    # Конец игры
     def game_over(self):
         # Обновление лучшего результата
         if int(self.root.ids.score.text) > MainApp.max_score:
@@ -292,12 +308,14 @@ class MainApp(App):
         self.energy_update(time_passed)
         self.is_down_update(time_passed)
         self.is_stop(time_passed)
+        self.increasing_update(time_passed)
 
     def start_game(self):
         # Считывание данных
         MainApp.speed = int(self.app.config.get('General', 'speed'))
         MainApp.complexity = int(self.app.config.get('General', 'complexity'))
-        MainApp.is_increasing_complexity = self.app.config.get('General', 'is_increasing_complexity')
+        MainApp.increasing_speed = self.app.config.get('General', 'increasing_speed')
+        MainApp.increasing_complexity = self.app.config.get('General', 'increasing_complexity')
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
 
         # Обнуление счета и энергии
@@ -461,7 +479,7 @@ class MainApp(App):
                 self.drinks.append(drink)
                 self.root.add_widget(drink)
 
-    # Реализуем запись скорости
+    # Реализуем запись настроек скорости
     def set_config_speed(self, speed):
         if speed.isdigit():
             self.speed = str(speed)
@@ -470,7 +488,7 @@ class MainApp(App):
         else:
             self.root.ids.input_speed.text = self.config.get('General', 'speed')
 
-    # Реализуем запись сложности
+    # Реализуем запись настроек сложности
     def set_config_complexity(self, complexity):
         if complexity.isdigit():
             self.complexity = str(complexity)
@@ -478,6 +496,38 @@ class MainApp(App):
             self.config.write()
         else:
             self.root.ids.input_complexity.text = self.config.get('General', 'complexity')
+
+    # Обновляем названия кнопок
+    def update_label_increasing(self):
+        # Ставим правильные названия кнопок для нарастания сложности
+        if MainApp.increasing_complexity == "1.1":
+            self.root.ids.label_increasing_complexity.text = "Нарастание сложности со временем\nВключено"
+            self.root.ids.button_text_increasing_complexity.text = "Выключить"
+        else:
+            self.root.ids.label_increasing_complexity.text = "Нарастание сложности со временем\nВыключено"
+            self.root.ids.button_text_increasing_complexity.text = "Включить"
+        # Ставим правильные названия кнопок для нарастания скорости
+        if MainApp.increasing_speed == "1.1":
+            self.root.ids.label_increasing_speed.text = "Нарастание скорости со временем\nВключено"
+            self.root.ids.button_text_increasing_speed.text = "Выключить"
+        else:
+            self.root.ids.label_increasing_speed.text = "Нарастание скорости со временем\nВыключено"
+            self.root.ids.button_text_increasing_speed.text = "Включить"
+
+    # Записываем нарастание скорости
+    def update_increasing_speed_setting(self):
+        if self.config.get('General', 'increasing_speed') == "1.1":
+            self.config.set('General', 'increasing_speed', "1")
+        else:
+            self.config.set('General', 'increasing_speed', "1.1")
+
+    # Записываем нарастание сложности
+    def update_increasing_complexity_setting(self):
+        if self.config.get('General', 'increasing_complexity') == "1.1":
+            self.config.set('General', 'increasing_complexity', "1")
+        else:
+            self.config.set('General', 'increasing_complexity', "1.1")
+
 
 if __name__ == "__main__":
     MainApp().run()

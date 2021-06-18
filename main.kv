@@ -94,7 +94,7 @@ FloatLayout:
         Label:
             size_hint: 0.3, 0.25
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: "Игра Flappy Ururu v0.6.2"
+            text: "Игра Flappy Ururu v0.6.3"
             color: (255, 255, 255)
             font_size: app.window_width / 45
         Label:
@@ -198,7 +198,7 @@ FloatLayout:
         TextInput:
             id: input_complexity
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: str(app.config.get('General', 'speed'))
+            text: str(app.config.get('General', 'complexity'))
             multiline: True
             size_hint: 0.2, 0.1
             #height: app.window_width / 70 + 100
@@ -214,12 +214,44 @@ FloatLayout:
                 orientation: 'vertical'
                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Label:
+                    id: label_increasing_speed
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-                    text: "первый"
+                    text: ""
                     color: (255, 255, 255)
                     font_size: app.window_width / 55
                 Button:
-                    text: "второй"
+                    id: button_text_increasing_speed
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    size_hint: 0.6, 0.9
+                    text: ""
+                    background_normal: "Images/sur_button.png"
+                    background_down: "Images/sur_button.png"
+                    on_release:
+                        app.update_increasing_speed_setting()
+                        self.text = "Нажмите \"Применить\""
+            Label:
+                size_hint: 0.2, 0.1
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                text: ""
+            BoxLayout:
+                orientation: 'vertical'
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Label:
+                    id: label_increasing_complexity
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    text: ""
+                    color: (255, 255, 255)
+                    font_size: app.window_width / 55
+                Button:
+                    id: button_text_increasing_complexity
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    size_hint: 0.6, 0.9
+                    text: ""
+                    background_normal: "Images/sur_button.png"
+                    background_down: "Images/sur_button.png"
+                    on_release:
+                        app.update_increasing_complexity_setting()
+                        self.text = "Нажмите \"Применить\""
             Label:
                 size_hint: 0.2, 0.1
                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -229,11 +261,19 @@ FloatLayout:
                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Label:
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-                    text: "третий"
+                    text: "Сбросить счет"
                     color: (255, 255, 255)
                     font_size: app.window_width / 55
                 Button:
-                    text: "четвертый"
+                    id: reset_button
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    size_hint: 0.6, 0.9
+                    text: "Сброс"
+                    background_normal: "Images/sur_button.png"
+                    background_down: "Images/sur_button.png"
+                    on_release:
+                        app.config.set('General', 'max_score', "0")
+                        self.text = "Нажмите \"Применить\""
         Button:
             text: "Применить"
             font_size: app.window_height / 14
@@ -242,13 +282,13 @@ FloatLayout:
             background_normal: "Images/button_frame.png"
             background_down: "Images/button_frame.png"
             on_release:
+                # Записываем настройки
                 app.set_config_speed(input_speed.text)
                 app.set_config_complexity(input_complexity.text)
                 app.config.write()
-
-
-
-
+                # Переписываем лучший результат и возвращаем кнопку если сбросили счет
+                max_score.text = "Лучший результат: " + str(app.config.get('General', 'max_score'))
+                reset_button.text = "Сброс"
     Label:
         id: energy
         size_hint_y: None
