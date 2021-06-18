@@ -83,6 +83,7 @@ class MainApp(App):
     increasing_speed = None
     increasing_complexity = None
     max_score = None
+    sound_volume = 1
     # Массивы с обьектами (ловушки и еда)
     cobwebs = []
     blood_bags = []
@@ -96,7 +97,7 @@ class MainApp(App):
     timer_stop = 0
     timer_increasing = 0
     # Музыка
-    sound_volume = 1
+
     sound = SoundLoader.load('music.mp3')
     sound.volume = 0.1 * sound_volume
     sound.play()
@@ -142,6 +143,8 @@ class MainApp(App):
         MainApp.increasing_speed = int(self.app.config.get('General', 'increasing_speed'))
         MainApp.increasing_complexity = int(self.app.config.get('General', 'increasing_complexity'))
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
+        MainApp.is_music = self.app.config.get('General', 'is_music')
+        MainApp.sound_volume = int(self.app.config.get('General', 'sound_volume'))
 
     # Заставляем Уруру двигаться вверх-вниз
     def move_ururu(self, time_passed):
@@ -346,6 +349,7 @@ class MainApp(App):
         MainApp.increasing_complexity = self.app.config.get('General', 'increasing_complexity')
         MainApp.max_score = int(self.app.config.get('General', 'max_score'))
         MainApp.is_music = self.app.config.get('General', 'is_music')
+        MainApp.sound_volume = int(self.app.config.get('General', 'sound_volume'))
 
         # Обнуление счета и энергии
         self.root.ids.score.text = "0"
