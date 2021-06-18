@@ -461,6 +461,23 @@ class MainApp(App):
                 self.drinks.append(drink)
                 self.root.add_widget(drink)
 
+    # Реализуем запись скорости
+    def set_config_speed(self, speed):
+        if speed.isdigit():
+            self.speed = str(speed)
+            self.config.set('General', 'speed', str(speed))
+            self.config.write()
+        else:
+            self.root.ids.input_speed.text = self.config.get('General', 'speed')
+
+    # Реализуем запись сложности
+    def set_config_complexity(self, complexity):
+        if complexity.isdigit():
+            self.complexity = str(complexity)
+            self.config.set('General', 'complexity', str(complexity))
+            self.config.write()
+        else:
+            self.root.ids.input_complexity.text = self.config.get('General', 'complexity')
 
 if __name__ == "__main__":
     MainApp().run()

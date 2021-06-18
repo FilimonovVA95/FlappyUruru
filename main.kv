@@ -50,6 +50,13 @@ FloatLayout:
             setting_button.opacity = 0
             about_game_button.disabled = True
             about_game_button.opacity = 0
+    Image:
+        id: scroll
+        size_hint: 0.8, 0.7
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        source: "Images/scroll.png"
+        disabled: False
+        opacity: 0.0
     Button:
         size_hint: None, None
         size: app.window_height / 7 * 2, app.window_height / 7
@@ -68,9 +75,8 @@ FloatLayout:
             start_game_button.disabled = True
             # Показываем свиток с кнопкой назад и текст
             about_game.opacity = 1
-            about_game_text1.opacity = 1
-            about_game_text2.opacity = 1
-            about_game_text3.opacity = 1
+            scroll.opacity = 1
+
     BoxLayout:
         orientation: 'vertical'
         id: about_game
@@ -79,49 +85,39 @@ FloatLayout:
         Button:
             text: "Назад"
             font_size: app.window_height / 14
-            size_hint: 0.3, 0.25
+            size_hint: 0.3, 0.45
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             background_normal: "Images/button_frame.png"
             background_down: "Images/button_frame.png"
             on_release:
                 # Реализация в кнопке "Назад" настроек
-        Image:
-            source: "Images/scroll.png"
-            disabled: False
         Label:
-            size_hint: 0.1, 0.25
+            size_hint: 0.3, 0.25
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: "Игра Flappy Ururu v0.6.2"
+            color: (255, 255, 255)
+            font_size: app.window_width / 45
+        Label:
+            size_hint: 0.3, 0.35
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: "    Разработчик: Дракоша \n    Иллюстрации: Mr.Zapadlo \n    Задний фон: интернет"
+            color: (255, 255, 255)
+            font_size: app.window_width / 55
+        Label:
+            size_hint: 0.5, 0.5
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: "    Вдохновитель: Ururu-chan \n    Поддержите Втубера"
+            color: (255, 255, 255)
+            font_size: app.window_width / 55
+        Label:
+            size_hint: 0.1, 0.5
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: ""
-            font_size: 40
-    Label:
-        id: about_game_text1
-        size_hint_y: None
-        height: root.height + app.window_height / 2
-        text: "Игра Flappy Ururu v0.6.1"
-        font_size: app.window_width / 45
-        color: (255, 255, 255)
-        opacity: 0.0
-    Label:
-        id: about_game_text2
-        size_hint_y: None
-        height: root.height + app.window_height / 6
-        text: "    Разработчик: Дракоша \n    Иллюстрации: Mr.Zapadlo \n    Задний фон: интернет"
-        font_size: app.window_width / 55
-        color: (255, 255, 255)
-        opacity: 0.0
-    Label:
-        id: about_game_text3
-        size_hint_y: None
-        height: root.height - app.window_height / 10
-        text: "    Вдохновитель: Ururu-chan \n    Поддержите Втубера"
-        font_size: app.window_width / 55
-        color: (255, 255, 255)
-        opacity: 0.0
-
 
     Button:
         size_hint: None, None
         size: app.window_height / 7 * 2, app.window_height / 7
-        pos: app.window_height / 4, app.window_height / 14
+        pos: app.window_height / 2, app.window_height / 14
         text: "Настройки"
         background_normal: "Images/button_frame.png"
         background_down: "Images/button_frame.png"
@@ -136,18 +132,10 @@ FloatLayout:
             start_game_button.disabled = True
             # Показываем свиток с кнопкой назад
             setting.opacity = 1
-            setting_scroll.opacity = 1
+            scroll.opacity = 1
             # Делаем доступными поля ввода
             input_speed.disabled = False
             input_complexity.disabled = False
-    Image:
-        id: setting_scroll
-        #size: app.windows_width / 2, app.windows_height / 2
-        size_hint: 0.8, 0.7
-        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        source: "Images/scroll.png"
-        disabled: False
-        opacity: 0.0
     BoxLayout:
         orientation: 'vertical'
         id: setting
@@ -163,16 +151,13 @@ FloatLayout:
             on_release:
                 # Скрываем информация "Об игре"
                 about_game.opacity = 0
-                about_game_text1.opacity = 0
-                about_game_text2.opacity = 0
-                about_game_text3.opacity = 0
                 about_game_button.disabled = False
                 about_game_button.opacity = 1
                 # Скрываем информацию настроек
                 setting.opacity = 0
                 setting_button.opacity = 1
                 setting_button.disabled = False
-                setting_scroll.opacity = 0
+                scroll.opacity = 0
                 # Включаем начало игры
                 start_game_button.disabled = False
                 # Делаем недоступными поля ввода
@@ -183,45 +168,72 @@ FloatLayout:
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: "Настройки"
             color: (255, 255, 255)
-            font_size: app.window_width / 25
+            font_size: app.window_width / 45
         Label:
             size_hint: 0.3, 0.1
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: "Коэфициент скорости движения обьектов, по умолчанию 1"
+            text: "Коэфициент скорости движения.\n Целое число, по умолчанию 1"
             multiline: True
             color: (255, 255, 255)
-            font_size: app.window_width / 40
+            font_size: app.window_width / 55
         TextInput:
             id: input_speed
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: str(app.config.get('General', 'speed'))
             multiline: True
-            size_hint: 0.3, 0.3
+            size_hint: 0.2, 0.1
             #height: app.window_width / 70 + 100
-            font_size: app.window_width / 40
-            hint_text: "Коэфициент скорости движения, по умолчанию 1"
+            font_size: app.window_width / 55
+            hint_text: "Коэфициент скорости движения. Целое число, по умолчанию 1"
             background_normal: "Images/transparent.png"
             background_down: "Images/transparent.png"
             disabled: True
         Label:
             size_hint: 0.3, 0.1
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: "Сложность, по умолчанию 1. Чем больше тем сложнее"
+            text: "Сложность, чем больше тем сложнее.\n Целое число, по умолчанию 1"
             multiline: True
             color: (255, 255, 255)
-            font_size: app.window_width / 40
+            font_size: app.window_width / 55
         TextInput:
             id: input_complexity
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             text: str(app.config.get('General', 'speed'))
             multiline: True
-            size_hint: 0.3, 0.3
+            size_hint: 0.2, 0.1
             #height: app.window_width / 70 + 100
-            font_size: app.window_width / 40
-            hint_text: "Сложность, по умолчанию 1. Чем больше тем сложнее"
+            font_size: app.window_width / 55
+            hint_text: "Сложность, чем больше тем сложнее. Целое число, по умолчанию 1"
             background_normal: "Images/transparent.png"
             background_down: "Images/transparent.png"
             disabled: True
+        BoxLayout:
+            size_hint: 0.3, 0.3
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            BoxLayout:
+                orientation: 'vertical'
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Label:
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    text: "первый"
+                    color: (255, 255, 255)
+                    font_size: app.window_width / 55
+                Button:
+                    text: "второй"
+            Label:
+                size_hint: 0.2, 0.1
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                text: ""
+            BoxLayout:
+                orientation: 'vertical'
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Label:
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    text: "третий"
+                    color: (255, 255, 255)
+                    font_size: app.window_width / 55
+                Button:
+                    text: "четвертый"
         Button:
             text: "Применить"
             font_size: app.window_height / 14
@@ -230,8 +242,8 @@ FloatLayout:
             background_normal: "Images/button_frame.png"
             background_down: "Images/button_frame.png"
             on_release:
-                app.config.set('General', 'speed', str(input_speed.text))
-                app.config.set('General', 'complexity', str(input_complexity.text))
+                app.set_config_speed(input_speed.text)
+                app.set_config_complexity(input_complexity.text)
                 app.config.write()
 
 
