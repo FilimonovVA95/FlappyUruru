@@ -286,7 +286,7 @@ class MainApp(App):
     # Конец игры
     def game_over(self):
         # Обновление лучшего результата
-        if int(self.root.ids.score.text) > MainApp.max_score:
+        if int(self.root.ids.score.text) > int(self.config.get('General', 'max_score')):
             MainApp.max_score = int(self.root.ids.score.text)
             self.config.set('General', 'max_score', str(MainApp.max_score))
             self.app.config.write()

@@ -24,10 +24,10 @@ install:
   - pip3 install --upgrade Cython==0.29.19 virtualenv
   - export PATH=$PATH:~/.local/bin/
   - ls -l
-  - yes | buildozer android debug
+  - yes | buildozer android release
   - ls -l
   - ls bin/ -l
   - echo "TODO"
   - gem install dpl --pre
-  - dpl releases --token $APK_TOKEN --file "bin/flappyUruru-0.8.2-armeabi-v7a-debug.apk" --tag_name "v.0.8.2"
+  - dpl releases --token $APK_TOKEN --file "bin/flappyUruru-1.0-armeabi-v7a-release-unsigned.apk" --tag_name "v.1.0"
   - echo "TODO 2"
