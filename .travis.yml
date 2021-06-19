@@ -14,7 +14,7 @@ install:
   - ls -l
   - cd buildozer
   - ls -l
-  - python3 setup.py debug
+  - python3 setup.py install
   - ls -l
   - cd ..
   - ls -l
@@ -24,7 +24,7 @@ install:
   - pip3 install --upgrade Cython==0.29.19 virtualenv
   - export PATH=$PATH:~/.local/bin/
   - ls -l
-  - yes | buildozer android release
+  - yes | buildozer android debug
   - ls -l
   - ls bin/ -l
   - echo "TODO"
