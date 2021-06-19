@@ -97,7 +97,6 @@ class MainApp(App):
     timer_stop = 0
     timer_increasing = 0
     # Музыка
-
     sound = SoundLoader.load('music.ogg')
     sound.volume = 0.1 * sound_volume
     sound.play()
@@ -115,7 +114,7 @@ class MainApp(App):
         config.setdefault('General', 'increasing_speed', "1")
         config.setdefault('General', 'increasing_complexity', "1")
         config.setdefault('General', 'max_score', "0")
-        config.setdefault('General', 'is_music', "False")
+        config.setdefault('General', 'is_music', "True")
         config.setdefault('General', 'sound_volume', "1")
 
     def set_value_from_config(self):
@@ -241,12 +240,10 @@ class MainApp(App):
             self.sound.play()
             self.root.ids.music.background_normal = "Images/music_on.png"
             self.root.ids.music.background_down = "Images/music_on.png"
-            print("play")
         if self.config.get('General', 'is_music') == "False" and self.sound.state == 'play':
             self.sound.stop()
             self.root.ids.music.background_normal = "Images/music_off.png"
             self.root.ids.music.background_down = "Images/music_off.png"
-            print("stop")
 
     # Проверяем на конец игры
     def check_game_over(self, time_passed):
