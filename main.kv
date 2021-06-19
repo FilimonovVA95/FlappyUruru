@@ -85,7 +85,6 @@ FloatLayout:
             # Показываем свиток с кнопкой назад и текст
             about_game.opacity = 1
             scroll.opacity = 1
-
     BoxLayout:
         orientation: 'vertical'
         id: about_game
@@ -107,13 +106,13 @@ FloatLayout:
         Label:
             size_hint: 0.3, 0.25
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: "Игра Flappy Ururu v0.8.1"
+            text: "Игра Flappy Ururu v.0.8.2"
             color: (255, 255, 255)
             font_size: app.window_width / 45
         Label:
             size_hint: 0.3, 0.35
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            text: "    Разработчик: Дракоша \n    Иллюстрации: Mr.Zapadlo \n    Задний фон: интернет"
+            text: "    Разработчик: Дракоша \n    Иллюстрации: Mr.Zapadlo \n    Моральная поддержка: Тортики"
             color: (255, 255, 255)
             font_size: app.window_width / 55
         Label:
@@ -191,7 +190,6 @@ FloatLayout:
             text: "Настройки"
             color: (255, 255, 255)
             font_size: app.window_width / 40
-
         BoxLayout:
             size_hint: 0.3, 0.1
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -212,9 +210,6 @@ FloatLayout:
                 background_normal: "Images/transparent.png"
                 background_down: "Images/transparent.png"
                 disabled: True
-
-
-
         Label:
             size_hint: 0.3, 0.15
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}

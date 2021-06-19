@@ -277,7 +277,7 @@ class MainApp(App):
             self.is_down = False
 
     # Счетчик за жизнь
-    def add_scrole(self, time_passed):
+    def add_score(self, time_passed):
         self.timer_score += 1
         if self.timer_score > 100:
             self.root.ids.score.text = str(int(self.root.ids.score.text) + 1)
@@ -325,9 +325,9 @@ class MainApp(App):
         self.move_cobwebs(time_passed)
         self.move_bits(time_passed)
         self.move_blood_bags(time_passed)
-        self.move_driks(time_passed)
+        self.move_drinks(time_passed)
         self.root.ids.background.scroll_textures(time_passed)
-        self.add_scrole(time_passed)
+        self.add_score(time_passed)
 
     # Запуск всего того, что должно постоянно работать с таймером
     def timer_go(self, time_passed):
@@ -485,7 +485,7 @@ class MainApp(App):
                 self.root.add_widget(blood)
 
     # Двигаем и генерируем новые энергосики
-    def move_driks(self, time_passed):
+    def move_drinks(self, time_passed):
         # Двигаем энергосики
         for drink in self.drinks:
             drink.x -= time_passed * 1200 * (0.9 + 0.11 * MainApp.speed) / MainApp.bonk_factor
@@ -565,6 +565,7 @@ class MainApp(App):
             self.root.ids.music.background_normal = "Images/music_off.png"
             self.root.ids.music.background_down = "Images/music_off.png"
             self.sound.stop()
+
 
 if __name__ == "__main__":
     MainApp().run()
