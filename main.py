@@ -115,7 +115,7 @@ class MainApp(App):
         config.setdefault('General', 'increasing_speed', "1")
         config.setdefault('General', 'increasing_complexity', "1")
         config.setdefault('General', 'max_score', "0")
-        config.setdefault('General', 'is_music', "True")
+        config.setdefault('General', 'is_music', "False")
         config.setdefault('General', 'sound_volume', "1")
 
     def set_value_from_config(self):

@@ -28,7 +28,7 @@ source.include_exts = py,png,jpg,kv,atlas,po,mo,mp3
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.7.3
+version = 0.7.4
 
 # (str) Application versioning (method 2)
 # version.regex = __version__ = ['"](.*)['"]
@@ -109,7 +109,7 @@ fullscreen = 0
 #android.ndk_api = 21
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
-#android.private_storage = True
+android.private_storage = False
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
 #android.ndk_path =
