@@ -14,7 +14,7 @@ install:
   - ls -l
   - cd buildozer
   - ls -l
-  - python3 setup.py install
+  - python3 setup.py debug
   - ls -l
   - cd ..
   - ls -l
@@ -29,5 +29,5 @@ install:
   - ls bin/ -l
   - echo "TODO"
   - gem install dpl --pre
-  - dpl releases --token $APK_TOKEN --file "bin/flappyUruru-1.1-armeabi-v7a-release-unsigned.apk" --tag_name "v.1.1"
+  - dpl releases --token $APK_TOKEN --file "bin/flappyUruru-1.1.1-armeabi-v7a-debug.apk" --tag_name "v.1.1.1"
   - echo "TODO 2"
