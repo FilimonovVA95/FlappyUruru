@@ -98,7 +98,7 @@ class MainApp(App):
     timer_increasing = 0
     # Музыка
 
-    sound = SoundLoader.load('music.mp3')
+    sound = SoundLoader.load('music.ogg')
     sound.volume = 0.1 * sound_volume
     sound.play()
 
