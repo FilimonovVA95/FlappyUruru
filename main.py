@@ -249,6 +249,7 @@ class MainApp(App):
     def check_game_over(self, time_passed):
         if MainApp.energy <= 0:
             self.game_over()
+            MainApp.energy = int(100)
 
     # Обновление энергии
     def energy_update(self, time_passed):
